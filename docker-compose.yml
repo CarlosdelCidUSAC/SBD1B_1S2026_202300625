@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  oracle-db:
+    image: gvenzl/oracle-xe:21.3.0-full
+    container_name: oracle-xe
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD}
+      APP_USER: ${DB_USER}
+      APP_USER_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${ORACLE_PORT:-1521}:1521"
+    volumes:
+      - oracle_data:/opt/oracle/oradata
+      - ./db/init.sql:/container-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  api:
+    build: ./api
+    container_name: sbd1-api
+    environment:
+      DB_HOST: oracle-db
+      DB_PORT: 1521
+      DB_SERVICE: ${DB_SERVICE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      PORT: ${API_PORT:-3000}
+    ports:
+      - "${API_PORT:-3000}:3000"
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    volumes:
+      - ./api:/usr/src/app
+      - /usr/src/app/node_modules
+
+volumes:
+  oracle_data:
