@@ -29,8 +29,27 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', database: 'Oracle XE', timestamp: new Date().toISOString() });
 });
 
-// Aquí montarás tus rutas más adelante
-// app.use('/api/centros', require('./routes/centros'));
+// ============================================================
+// MONTAJE DE RUTAS CRUD - 13 tablas
+// ============================================================
+app.use('/api/centros', require('./routes/centros'));
+app.use('/api/escuelas', require('./routes/escuelasRoute'));
+app.use('/api/licencias', require('./routes/licenciasRoute'));
+app.use('/api/departamentos', require('./routes/departamentosRoute'));
+app.use('/api/municipios', require('./routes/municipiosRoute'));
+app.use('/api/ubicaciones', require('./routes/ubicacionesRoute'));
+app.use('/api/registros', require('./routes/registrosRoute'));
+app.use('/api/correlativos', require('./routes/correlativosRoute'));
+app.use('/api/examenes', require('./routes/examenesRoute'));
+app.use('/api/preguntas', require('./routes/preguntasRoute'));
+app.use('/api/preguntas-practico', require('./routes/preguntasPracticoRoute'));
+app.use('/api/respuestas-usuario', require('./routes/respuestasUsuarioRoute'));
+app.use('/api/respuestas-practico', require('./routes/respuestasPracticoRoute'));
+
+// ============================================================
+// RUTAS DE CONSULTAS ESTADÍSTICAS
+// ============================================================
+app.use('/api/estadisticas', require('./routes/estadisticasRoute'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

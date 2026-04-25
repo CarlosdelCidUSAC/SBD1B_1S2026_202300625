@@ -1,0 +1,1262 @@
+{
+	"info": {
+		"name": "SBD1 - Centros de Evaluación de Manejo",
+		"description": "Colección completa de endpoints CRUD + consultas estadísticas para el Proyecto 2 de SBD1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "GET Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": ["{{base_url}}"],
+							"path": ["health"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Centros de Evaluación",
+			"item": [
+				{
+					"name": "GET Listar todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/centros",
+							"host": ["{{base_url}}"],
+							"path": ["api", "centros"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/centros/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "centros", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Centro de Evaluación Zona 18\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/centros",
+							"host": ["{{base_url}}"],
+							"path": ["api", "centros"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Centro de Evaluación Zona 12 Actualizado\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/centros/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "centros", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Eliminar (no encontrado - error 404)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/centros/999",
+							"host": ["{{base_url}}"],
+							"path": ["api", "centros", "999"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Escuelas de Manejo",
+			"item": [
+				{
+					"name": "GET Listar todas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/escuelas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "escuelas"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/escuelas/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "escuelas", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Escuela de Manejo Nueva\",\n  \"direccion\": \"6a Avenida 10-20, Zona 1\",\n  \"acuerdo\": \"ESC-NV-001\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/escuelas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "escuelas"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"AutoMaster Actualizado\",\n  \"direccion\": \"Avenida Reforma 15-45, Zona 10\",\n  \"acuerdo\": \"ESC-AM-001\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/escuelas/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "escuelas", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Eliminar (error 404 ejemplo)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/escuelas/999",
+							"host": ["{{base_url}}"],
+							"path": ["api", "escuelas", "999"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Licencias",
+			"item": [
+				{
+					"name": "GET Listar todas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/licencias",
+							"host": ["{{base_url}}"],
+							"path": ["api", "licencias"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Obtener por código",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/licencias/A",
+							"host": ["{{base_url}}"],
+							"path": ["api", "licencias", "A"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"codigo\": \"M\",\n  \"descripcion\": \"Motocicleta liviana\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/licencias",
+							"host": ["{{base_url}}"],
+							"path": ["api", "licencias"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"descripcion\": \"Motocicleta actualizada\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/licencias/A",
+							"host": ["{{base_url}}"],
+							"path": ["api", "licencias", "A"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Eliminar (error 404)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/licencias/Z",
+							"host": ["{{base_url}}"],
+							"path": ["api", "licencias", "Z"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Departamentos",
+			"item": [
+				{
+					"name": "GET Listar todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departamentos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departamentos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departamentos/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departamentos", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Quetzaltenango\",\n  \"codigo\": \"09\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/departamentos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departamentos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Guatemala Actualizado\",\n  \"codigo\": \"01\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/departamentos/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departamentos", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Eliminar (error 404)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/departamentos/999",
+							"host": ["{{base_url}}"],
+							"path": ["api", "departamentos", "999"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Municipios",
+			"item": [
+				{
+					"name": "GET Listar todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/municipios",
+							"host": ["{{base_url}}"],
+							"path": ["api", "municipios"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/municipios/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "municipios", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"departamento_id_departamento\": 1,\n  \"nombre\": \"San Miguel Petapa\",\n  \"codigo\": \"04\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/municipios",
+							"host": ["{{base_url}}"],
+							"path": ["api", "municipios"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"departamento_id_departamento\": 1,\n  \"nombre\": \"Guatemala Actualizado\",\n  \"codigo\": \"01\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/municipios/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "municipios", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Eliminar (error 404)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/municipios/999",
+							"host": ["{{base_url}}"],
+							"path": ["api", "municipios", "999"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ubicaciones",
+			"item": [
+				{
+					"name": "GET Listar todas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/ubicaciones",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ubicaciones"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Obtener por PK compuesta",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/ubicaciones/1/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ubicaciones", "1", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"escuela_id_escuela\": 1,\n  \"centro_id_centro\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/ubicaciones",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ubicaciones"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"escuela_id_escuela\": 2,\n  \"centro_id_centro\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/ubicaciones/1/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ubicaciones", "1", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Eliminar (error 404)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/ubicaciones/999/999",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ubicaciones", "999", "999"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Registros",
+			"item": [
+				{
+					"name": "GET Listar todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/registros",
+							"host": ["{{base_url}}"],
+							"path": ["api", "registros"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/registros/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "registros", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"ubicacion_escuela_id_escuela\": 1,\n  \"ubicacion_centro_id_centro\": 1,\n  \"municipio_id_municipio\": 1,\n  \"municipio_departamento_id_departamento\": 1,\n  \"fecha\": \"2025-02-01\",\n  \"tipo_tramite\": \"Licencia de Conducir\",\n  \"tipo_licencia\": \"B\",\n  \"nombre_completo\": \"Luis Fernando Pérez\",\n  \"genero\": \"M\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/registros",
+							"host": ["{{base_url}}"],
+							"path": ["api", "registros"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"ubicacion_escuela_id_escuela\": 1,\n  \"ubicacion_centro_id_centro\": 1,\n  \"municipio_id_municipio\": 1,\n  \"municipio_departamento_id_departamento\": 1,\n  \"fecha\": \"2025-02-01\",\n  \"tipo_tramite\": \"Licencia de Conducir\",\n  \"tipo_licencia\": \"B\",\n  \"nombre_completo\": \"Luis Fernando Pérez Actualizado\",\n  \"genero\": \"M\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/registros/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "registros", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Eliminar (error 404)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/registros/999",
+							"host": ["{{base_url}}"],
+							"path": ["api", "registros", "999"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Correlativos",
+			"item": [
+				{
+					"name": "GET Listar todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/correlativos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "correlativos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/correlativos/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "correlativos", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fecha\": \"2025-02-01\",\n  \"no_examen\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/correlativos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "correlativos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fecha\": \"2025-02-01\",\n  \"no_examen\": 11\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/correlativos/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "correlativos", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Eliminar (error 404)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/correlativos/999",
+							"host": ["{{base_url}}"],
+							"path": ["api", "correlativos", "999"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Exámenes",
+			"item": [
+				{
+					"name": "GET Listar todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/examenes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "examenes"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/examenes/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "examenes", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"registro_id_registro\": 1,\n  \"correlativo_id_correlativo\": 1,\n  \"registro_id_escuela\": 1,\n  \"registro_id_centro\": 1,\n  \"registro_municipio_id_municipio\": 1,\n  \"registro_municipio_departamento_id_departamento\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/examenes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "examenes"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"registro_id_registro\": 1,\n  \"correlativo_id_correlativo\": 2,\n  \"registro_id_escuela\": 1,\n  \"registro_id_centro\": 1,\n  \"registro_municipio_id_municipio\": 1,\n  \"registro_municipio_departamento_id_departamento\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/examenes/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "examenes", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Eliminar (error 404)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/examenes/999",
+							"host": ["{{base_url}}"],
+							"path": ["api", "examenes", "999"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Preguntas Teóricas",
+			"item": [
+				{
+					"name": "GET Listar todas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/preguntas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "preguntas"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/preguntas/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "preguntas", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pregunta_texto\": \"¿Qué indica una señal de ceda el paso?\",\n  \"respuesta_a\": \"Detenerse completamente\",\n  \"respuesta_b\": \"Ceder el paso a vehículos en la vía principal\",\n  \"respuesta_c\": \"Acelerar\",\n  \"respuesta_d\": \"Estacionarse\",\n  \"respuesta_correcta\": \"B\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/preguntas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "preguntas"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pregunta_texto\": \"¿Cuál es la distancia mínima entre vehículos? Actualizada\",\n  \"respuesta_a\": \"2 metros\",\n  \"respuesta_b\": \"3 segundos de distancia\",\n  \"respuesta_c\": \"5 metros\",\n  \"respuesta_d\": \"1 segundo de distancia\",\n  \"respuesta_correcta\": \"B\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/preguntas/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "preguntas", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Eliminar (error 404)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/preguntas/999",
+							"host": ["{{base_url}}"],
+							"path": ["api", "preguntas", "999"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Preguntas Prácticas",
+			"item": [
+				{
+					"name": "GET Listar todas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/preguntas-practico",
+							"host": ["{{base_url}}"],
+							"path": ["api", "preguntas-practico"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/preguntas-practico/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "preguntas-practico", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pregunta_texto\": \"Estacionarse en pendiente con freno de mano\",\n  \"punteo\": 15\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/preguntas-practico",
+							"host": ["{{base_url}}"],
+							"path": ["api", "preguntas-practico"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pregunta_texto\": \"Estacionamiento en paralelo actualizado\",\n  \"punteo\": 25\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/preguntas-practico/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "preguntas-practico", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Eliminar (error 404)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/preguntas-practico/999",
+							"host": ["{{base_url}}"],
+							"path": ["api", "preguntas-practico", "999"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Respuestas de Usuario (Teórico)",
+			"item": [
+				{
+					"name": "GET Listar todas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/respuestas-usuario",
+							"host": ["{{base_url}}"],
+							"path": ["api", "respuestas-usuario"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/respuestas-usuario/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "respuestas-usuario", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pregunta_id_pregunta\": 1,\n  \"examen_id_examen\": 1,\n  \"respuesta\": \"B\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/respuestas-usuario",
+							"host": ["{{base_url}}"],
+							"path": ["api", "respuestas-usuario"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pregunta_id_pregunta\": 1,\n  \"examen_id_examen\": 1,\n  \"respuesta\": \"A\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/respuestas-usuario/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "respuestas-usuario", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Eliminar (error 404)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/respuestas-usuario/999",
+							"host": ["{{base_url}}"],
+							"path": ["api", "respuestas-usuario", "999"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Respuestas Prácticas",
+			"item": [
+				{
+					"name": "GET Listar todas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/respuestas-practico",
+							"host": ["{{base_url}}"],
+							"path": ["api", "respuestas-practico"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Obtener por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/respuestas-practico/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "respuestas-practico", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Crear",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pregunta_practico_id_pregunta_practico\": 1,\n  \"examen_id_examen\": 1,\n  \"nota\": 18\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/respuestas-practico",
+							"host": ["{{base_url}}"],
+							"path": ["api", "respuestas-practico"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Actualizar",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pregunta_practico_id_pregunta_practico\": 1,\n  \"examen_id_examen\": 1,\n  \"nota\": 20\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/respuestas-practico/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "respuestas-practico", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Eliminar (error 404)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/respuestas-practico/999",
+							"host": ["{{base_url}}"],
+							"path": ["api", "respuestas-practico", "999"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Consultas Estadísticas",
+			"item": [
+				{
+					"name": "Consulta 1 - Estadísticas por centro y escuela",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/estadisticas/consulta1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "estadisticas", "consulta1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Consulta 2 - Ranking de evaluados",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/estadisticas/consulta2",
+							"host": ["{{base_url}}"],
+							"path": ["api", "estadisticas", "consulta2"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Consulta 3 - Pregunta con menor aciertos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/estadisticas/consulta3",
+							"host": ["{{base_url}}"],
+							"path": ["api", "estadisticas", "consulta3"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Errores de Validación",
+			"item": [
+				{
+					"name": "POST Centro sin nombre (error 400)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/centros",
+							"host": ["{{base_url}}"],
+							"path": ["api", "centros"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Centro no encontrado (error 404)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/centros/9999",
+							"host": ["{{base_url}}"],
+							"path": ["api", "centros", "9999"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}

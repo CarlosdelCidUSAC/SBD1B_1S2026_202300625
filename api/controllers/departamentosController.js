@@ -1,117 +1,113 @@
 const oracledb = require('oracledb');
 const { getConnection } = require('../db');
 
-// GET /api/centros - Listar todos los centros de evaluación
 exports.getAll = async (req, res) => {
   let conn;
   try {
     conn = await getConnection();
     const result = await conn.execute(
-      'SELECT no_centro, nombre FROM CENTRO_EVAL ORDER BY no_centro'
+      'SELECT id_departamento, nombre, codigo FROM DEPARTAMENTO ORDER BY id_departamento'
     );
     res.json(result.rows.map(row => ({
-      no_centro: row[0],
-      nombre: row[1]
+      id_departamento: row[0],
+      nombre: row[1],
+      codigo: row[2]
     })));
   } catch (err) {
-    console.error('Error al listar centros:', err);
+    console.error('Error al listar departamentos:', err);
     res.status(500).json({ error: 'Error interno del servidor' });
   } finally {
     if (conn) await conn.close();
   }
 };
 
-// GET /api/centros/:id - Obtener un centro por ID
 exports.getById = async (req, res) => {
   let conn;
   try {
     const { id } = req.params;
     conn = await getConnection();
     const result = await conn.execute(
-      'SELECT no_centro, nombre FROM CENTRO_EVAL WHERE no_centro = :id',
+      'SELECT id_departamento, nombre, codigo FROM DEPARTAMENTO WHERE id_departamento = :id',
       [id]
     );
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Centro de evaluación no encontrado' });
+      return res.status(404).json({ error: 'Departamento no encontrado' });
     }
     const row = result.rows[0];
-    res.json({ no_centro: row[0], nombre: row[1] });
+    res.json({ id_departamento: row[0], nombre: row[1], codigo: row[2] });
   } catch (err) {
-    console.error('Error al obtener centro:', err);
+    console.error('Error al obtener departamento:', err);
     res.status(500).json({ error: 'Error interno del servidor' });
   } finally {
     if (conn) await conn.close();
   }
 };
 
-// POST /api/centros - Crear un nuevo centro
 exports.create = async (req, res) => {
   let conn;
   try {
-    const { nombre } = req.body;
-    if (!nombre) {
-      return res.status(400).json({ error: 'El campo "nombre" es obligatorio' });
+    const { nombre, codigo } = req.body;
+    if (!nombre || !codigo) {
+      return res.status(400).json({ error: 'Los campos "nombre" y "codigo" son obligatorios' });
     }
     conn = await getConnection();
     const result = await conn.execute(
-      'INSERT INTO CENTRO_EVAL (nombre) VALUES (:nombre) RETURNING no_centro INTO :id',
-      { nombre, id: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT } },
+      'INSERT INTO DEPARTAMENTO (nombre, codigo) VALUES (:nombre, :codigo) RETURNING id_departamento INTO :id',
+      { nombre, codigo, id: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT } },
       { autoCommit: true }
     );
     const newId = result.outBinds.id[0];
-    res.status(201).json({ no_centro: newId, nombre });
+    res.status(201).json({ id_departamento: newId, nombre, codigo });
   } catch (err) {
-    console.error('Error al crear centro:', err);
+    console.error('Error al crear departamento:', err);
     res.status(500).json({ error: 'Error interno del servidor' });
   } finally {
     if (conn) await conn.close();
   }
 };
 
-// PUT /api/centros/:id - Actualizar un centro
 exports.update = async (req, res) => {
   let conn;
   try {
     const { id } = req.params;
-    const { nombre } = req.body;
-    if (!nombre) {
-      return res.status(400).json({ error: 'El campo "nombre" es obligatorio' });
+    const { nombre, codigo } = req.body;
+    if (!nombre || !codigo) {
+      return res.status(400).json({ error: 'Los campos "nombre" y "codigo" son obligatorios' });
     }
     conn = await getConnection();
     const result = await conn.execute(
-      'UPDATE CENTRO_EVAL SET nombre = :nombre WHERE no_centro = :id',
-      { nombre, id },
+      'UPDATE DEPARTAMENTO SET nombre = :nombre, codigo = :codigo WHERE id_departamento = :id',
+      { nombre, codigo, id },
       { autoCommit: true }
     );
     if (result.rowsAffected === 0) {
-      return res.status(404).json({ error: 'Centro de evaluación no encontrado' });
+      return res.status(404).json({ error: 'Departamento no encontrado' });
     }
-    res.json({ no_centro: parseInt(id), nombre });
+    res.json({ id_departamento: parseInt(id), nombre, codigo });
   } catch (err) {
-    console.error('Error al actualizar centro:', err);
+    console.error('Error al actualizar departamento:', err);
     res.status(500).json({ error: 'Error interno del servidor' });
   } finally {
     if (conn) await conn.close();
   }
 };
 
-// DELETE /api/centros/:id - Eliminar un centro
 exports.remove = async (req, res) => {
   let conn;
   try {
     const { id } = req.params;
     conn = await getConnection();
     const result = await conn.execute(
-      'DELETE FROM CENTRO_EVAL WHERE no_centro = :id',
+      'DELETE FROM DEPARTAMENTO WHERE id_departamento = :id',
       [id],
       { autoCommit: true }
     );
     if (result.rowsAffected === 0) {
-      return res.status(404).json({ error: 'Centro de evaluación no encontrado' });
+      return res.status(404).json({ error: 'Departamento no encontrado' });
     }
-    res.json({ mensaje: 'Centro de evaluación eliminado exitosamente' });
+    res.json({ mensaje: 'Departamento eliminado exitosamente' });
   } catch (err) {
-    console.error('Error al eliminar centro:', err);
+    console.error('Error al eliminar departamento:', err);
     res.status(500).json({ error: 'Error interno del servidor' });
   } finally {
     if (conn) await conn.close();

@@ -1,629 +1,227 @@
--- Generado por Oracle SQL Developer Data Modeler 24.3.1.351.0831
---   en:        2026-03-26 18:19:24 CST
---   sitio:      Oracle Database 21c
---   tipo:      Oracle Database 21c
-
-
-
--- predefined type, no DDL - MDSYS.SDO_GEOMETRY
-
--- predefined type, no DDL - XMLTYPE
-
-CREATE TABLE ASIGNACION
-    (
-     ESTUDIANTE_CARNET   NUMBER (10)  NOT NULL ,
-     SECCION_CODIGOCURSO NUMBER (5)  NOT NULL ,
-     SECCION_SECCION     VARCHAR2 (5)  NOT NULL ,
-     SECCION_ANIO        NUMBER (4)  NOT NULL ,
-     SECCION_CICLO       VARCHAR2 (10)  NOT NULL ,
-     ZONA                NUMBER (5,2) ,
-     NOTA                NUMBER (5,2)
-    )
-    LOGGING
-;
-
-ALTER TABLE ASIGNACION
-    ADD CONSTRAINT ASIGNACION_CK_1
-    CHECK ( ADD CONSTRAINT CHK_ZONA_POSITIVA
-    CHECK (ZONA >= 0 AND ZONA <= 100);
-
-ADD CONSTRAINT CHK_NOTA_POSITIVA
-    CHECK (NOTA >= 0 AND NOTA <= 100);)
-;
-ALTER TABLE ASIGNACION
-    ADD CONSTRAINT ASIGNACION_PK PRIMARY KEY ( ESTUDIANTE_CARNET, SECCION_CODIGOCURSO, SECCION_SECCION, SECCION_ANIO, SECCION_CICLO ) ;
-
-CREATE TABLE CARRERA
-    (
-     CARRERA NUMBER (5)  NOT NULL ,
-     NOMBRE  VARCHAR2 (100)  NOT NULL
-    )
-    LOGGING
-;
-
-ALTER TABLE CARRERA
-    ADD CONSTRAINT CARRERA_PK PRIMARY KEY ( CARRERA ) ;
-
-CREATE TABLE CATEDRATICO
-    (
-     CATEDRATICO   NUMBER (5)  NOT NULL ,
-     NOMBRE        VARCHAR2 (150)  NOT NULL ,
-     SUELDOMENSUAL NUMBER (10,2)  NOT NULL
-    )
-    LOGGING
-;
-
-ALTER TABLE CATEDRATICO
-    ADD CONSTRAINT CHK_SUELDO
-    CHECK (SUELDOMENSUAL > 0)
-;
-ALTER TABLE CATEDRATICO
-    ADD CONSTRAINT CATEDRATICO_PK PRIMARY KEY ( CATEDRATICO ) ;
-
-CREATE TABLE CURSO
-    (
-     CODIGOCURSO NUMBER (5)  NOT NULL ,
-     NOMBRECURSO VARCHAR2 (100)  NOT NULL
-    )
-    LOGGING
-;
-
-ALTER TABLE CURSO
-    ADD CONSTRAINT CURSO_PK PRIMARY KEY ( CODIGOCURSO ) ;
-
-CREATE TABLE DIA
-    (
-     DIA       NUMBER (1)  NOT NULL ,
-     NOMBREDIA VARCHAR2 (20)  NOT NULL
-    )
-    LOGGING
-;
-
-ALTER TABLE DIA
-    ADD CONSTRAINT CHK_DIA_NUM
-    CHECK (DIA BETWEEN 1 AND 7)
-;
-ALTER TABLE DIA
-    ADD CONSTRAINT DIA_PK PRIMARY KEY ( DIA ) ;
-
-CREATE TABLE ESTUDIANTE
-    (
-     CARNET          NUMBER (10)  NOT NULL ,
-     NOMBRE          VARCHAR2 (150)  NOT NULL ,
-     INGRESOFAMILIAR NUMBER (12,2) ,
-     FECHANACIMIENTO DATE
-    )
-    LOGGING
-;
-
-ALTER TABLE ESTUDIANTE
-    ADD CONSTRAINT ESTUDIANTE_PK PRIMARY KEY ( CARNET ) ;
-
-CREATE TABLE HORARIO
-    (
-     SECCION_CURSO_CODIGOCURSO NUMBER (5)  NOT NULL ,
-     SECCION_SECCION           VARCHAR2 (5)  NOT NULL ,
-     SECCION_ANIO              NUMBER (4)  NOT NULL ,
-     SECCION_CICLO             VARCHAR2 (10)  NOT NULL ,
-     PERIODO_PERIODO           NUMBER (5)  NOT NULL ,
-     DIA_DIA                   NUMBER (1)  NOT NULL ,
-     SALON_EDIFICIO            VARCHAR2 (10)  NOT NULL ,
-     SALON_SALON               NUMBER (5)  NOT NULL
-    )
-    LOGGING
-;
-
-ALTER TABLE HORARIO
-    ADD CONSTRAINT HORARIO_PK PRIMARY KEY ( SECCION_CURSO_CODIGOCURSO, SECCION_SECCION, SECCION_ANIO, SECCION_CICLO, PERIODO_PERIODO, DIA_DIA ) ;
-
-CREATE TABLE INSCRIPCION
-    (
-     CARRERA          NUMBER (5)  NOT NULL ,
-     CARNET           NUMBER (10)  NOT NULL ,
-     FECHAINSCRIPCION DATE  NOT NULL
-    )
-    LOGGING
-;
-
-ALTER TABLE INSCRIPCION
-    ADD CONSTRAINT INSCRIPCION_PK PRIMARY KEY ( CARRERA, CARNET ) ;
-
-CREATE TABLE PENSUM
-    (
-     CURSO_CODIGOCURSO    NUMBER (5)  NOT NULL ,
-     PLAN_PLAN            VARCHAR2 (20)  NOT NULL ,
-     PLAN_CARRERA_CARRERA NUMBER (5)  NOT NULL ,
-     OBLIGATORIEDAD       NUMBER (1)  NOT NULL ,
-     NUMCREDITOS          NUMBER (5)  NOT NULL ,
-     NOTAAPROBACION       NUMBER (5,2)  NOT NULL ,
-     ZONAMINIMA           NUMBER (5,2)  NOT NULL ,
-     CREDPRERREQUISITOS   NUMBER (5)  NOT NULL
-    )
-    LOGGING
-;
-
-ALTER TABLE PENSUM
-    ADD CONSTRAINT CHK_CREDP
-    CHECK (NUMCREDITOS > 0)
-;
-
-
-ALTER TABLE PENSUM
-    ADD CONSTRAINT CHK_OBLIG
-    CHECK (OBLIGATORIEDAD IN (0, 1))
-;
-
-
-ALTER TABLE PENSUM
-    ADD CONSTRAINT PENSUM_CK_3
-    CHECK (ADD CONSTRAINT CHK_NOTAAPROBACION_RANGO
-    CHECK (NOTAAPROBACION >= 0 AND NOTAAPROBACION <= 100);
-ADD CONSTRAINT CHK_ZONAMINIMA_RANGO
-    CHECK (ZONAMINIMA >= 0 AND ZONAMINIMA <= 100);
-ADD CONSTRAINT CHK_CREDPRERREQ_POSITIVO
-    CHECK (CREDPRERREQUISITOS >= 0);
-)
-;
-ALTER TABLE PENSUM
-    ADD CONSTRAINT PENSUM_PK PRIMARY KEY ( CURSO_CODIGOCURSO, PLAN_PLAN, PLAN_CARRERA_CARRERA ) ;
-
-CREATE TABLE PERIODO
-    (
-     PERIODO       NUMBER (5)  NOT NULL ,
-     HORARIOINICIO VARCHAR2 (10)  NOT NULL ,
-     HORARIOFINAL  VARCHAR2 (10)  NOT NULL
-    )
-    LOGGING
-;
-
-ALTER TABLE PERIODO
-    ADD CONSTRAINT PERIODO_PK PRIMARY KEY ( PERIODO ) ;
-
-CREATE TABLE PLAN
-    (
-     PLAN              VARCHAR2 (20)  NOT NULL ,
-     CARRERA           NUMBER (5)  NOT NULL ,
-     NOMBRE            VARCHAR2 (100)  NOT NULL ,
-     ANIOINICIAL       NUMBER (4)  NOT NULL ,
-     CICLOINICIAL      VARCHAR2 (10)  NOT NULL ,
-     ANIOFINAL         NUMBER (4)  NOT NULL ,
-     CICLOFINAL        VARCHAR2 (10)  NOT NULL ,
-     NUMCREDITOSCIERRE NUMBER (5)  NOT NULL
-    )
-    LOGGING
-;
-
-ALTER TABLE PLAN
-    ADD CONSTRAINT CHK_CREDCIERRE
-    CHECK (NUMCREDITOSCIERRE > 0)
-;
-
-
-ALTER TABLE PLAN
-    ADD CONSTRAINT PLAN_CK_2
-    CHECK (ADD CONSTRAINT CHK_ANIOS_PLAN
-    CHECK (ANIOINICIAL < ANIOFINAL OR
-          (ANIOINICIAL = ANIOFINAL AND CICLOINICIAL != CICLOFINAL));)
-;
-ALTER TABLE PLAN
-    ADD CONSTRAINT PLAN_PK PRIMARY KEY ( PLAN, CARRERA ) ;
-
-CREATE TABLE PRERREQ
-    (
-     PENSUM_CARRERA     NUMBER (5)  NOT NULL ,
-     PENSUM_PLAN        VARCHAR2 (20)  NOT NULL ,
-     PENSUM_CURSO       NUMBER (5)  NOT NULL ,
-     CURSO_PREREQUISITO NUMBER (5)  NOT NULL
-    )
-    LOGGING
-;
-
-ALTER TABLE PRERREQ
-    ADD CONSTRAINT PRERREQ_PK PRIMARY KEY ( PENSUM_CARRERA, PENSUM_PLAN, PENSUM_CURSO, CURSO_PREREQUISITO ) ;
-
-CREATE TABLE SALON
-    (
-     EDIFICIO  VARCHAR2 (10)  NOT NULL ,
-     SALON     NUMBER (5)  NOT NULL ,
-     CAPACIDAD NUMBER (4)  NOT NULL
-    )
-    LOGGING
-;
-
-ALTER TABLE SALON
-    ADD CONSTRAINT CHK_CAPACIDAD
-    CHECK (CAPACIDAD > 0)
-;
-ALTER TABLE SALON
-    ADD CONSTRAINT SALON_PK PRIMARY KEY ( EDIFICIO, SALON ) ;
-
-CREATE TABLE SECCION
-    (
-     SECCION                 VARCHAR2 (5)  NOT NULL ,
-     ANIO                    NUMBER (4)  NOT NULL ,
-     CICLO                   VARCHAR2 (10)  NOT NULL ,
-     CURSO_CODIGOCURSO       NUMBER (5)  NOT NULL ,
-     CATEDRATICO_CATEDRATICO NUMBER (5)  NOT NULL
-    )
-    LOGGING
-;
-
-ALTER TABLE SECCION
-    ADD CONSTRAINT SECCION_PK PRIMARY KEY ( SECCION, ANIO, CICLO, CURSO_CODIGOCURSO ) ;
-
-ALTER TABLE ASIGNACION
-    ADD CONSTRAINT ASIGNACION_ESTUD_FK FOREIGN KEY
-    (
-     ESTUDIANTE_CARNET
-    )
-    REFERENCES ESTUDIANTE
-    (
-     CARNET
-    )
-    NOT DEFERRABLE
-;
-
-ALTER TABLE ASIGNACION
-    ADD CONSTRAINT ASIGNACION_SECCION_FK FOREIGN KEY
-    (
-     SECCION_SECCION,
-     SECCION_ANIO,
-     SECCION_CICLO,
-     SECCION_CODIGOCURSO
-    )
-    REFERENCES SECCION
-    (
-     SECCION,
-     ANIO,
-     CICLO,
-     CURSO_CODIGOCURSO
-    )
-    NOT DEFERRABLE
-;
-
-ALTER TABLE HORARIO
-    ADD CONSTRAINT HORARIO_DIA_FK FOREIGN KEY
-    (
-     DIA_DIA
-    )
-    REFERENCES DIA
-    (
-     DIA
-    )
-    NOT DEFERRABLE
-;
-
-ALTER TABLE HORARIO
-    ADD CONSTRAINT HORARIO_PERIODO_FK FOREIGN KEY
-    (
-     PERIODO_PERIODO
-    )
-    REFERENCES PERIODO
-    (
-     PERIODO
-    )
-    NOT DEFERRABLE
-;
-
-ALTER TABLE HORARIO
-    ADD CONSTRAINT HORARIO_SALON_FK FOREIGN KEY
-    (
-     SALON_EDIFICIO,
-     SALON_SALON
-    )
-    REFERENCES SALON
-    (
-     EDIFICIO,
-     SALON
-    )
-    NOT DEFERRABLE
-;
-
-ALTER TABLE HORARIO
-    ADD CONSTRAINT HORARIO_SECCION_FK FOREIGN KEY
-    (
-     SECCION_SECCION,
-     SECCION_ANIO,
-     SECCION_CICLO,
-     SECCION_CURSO_CODIGOCURSO
-    )
-    REFERENCES SECCION
-    (
-     SECCION,
-     ANIO,
-     CICLO,
-     CURSO_CODIGOCURSO
-    )
-    NOT DEFERRABLE
-;
-
-ALTER TABLE INSCRIPCION
-    ADD CONSTRAINT INSCRIPCION_CARRERA_FK FOREIGN KEY
-    (
-     CARRERA
-    )
-    REFERENCES CARRERA
-    (
-     CARRERA
-    )
-    NOT DEFERRABLE
-;
-
-ALTER TABLE INSCRIPCION
-    ADD CONSTRAINT INSCRIPCION_ESTUD_FK FOREIGN KEY
-    (
-     CARNET
-    )
-    REFERENCES ESTUDIANTE
-    (
-     CARNET
-    )
-    NOT DEFERRABLE
-;
-
-ALTER TABLE PENSUM
-    ADD CONSTRAINT PENSUM_CURSO_FK FOREIGN KEY
-    (
-     CURSO_CODIGOCURSO
-    )
-    REFERENCES CURSO
-    (
-     CODIGOCURSO
-    )
-    NOT DEFERRABLE
-;
-
-ALTER TABLE PENSUM
-    ADD CONSTRAINT PENSUM_PLAN_FK FOREIGN KEY
-    (
-     PLAN_PLAN,
-     PLAN_CARRERA_CARRERA
-    )
-    REFERENCES PLAN
-    (
-     PLAN,
-     CARRERA
-    )
-    NOT DEFERRABLE
-;
-
-ALTER TABLE PLAN
-    ADD CONSTRAINT PLAN_CARRERA_FK FOREIGN KEY
-    (
-     CARRERA
-    )
-    REFERENCES CARRERA
-    (
-     CARRERA
-    )
-    NOT DEFERRABLE
-;
-
-ALTER TABLE PRERREQ
-    ADD CONSTRAINT PRERREQ_CURSO_FK FOREIGN KEY
-    (
-     CURSO_PREREQUISITO
-    )
-    REFERENCES CURSO
-    (
-     CODIGOCURSO
-    )
-    NOT DEFERRABLE
-;
-
-ALTER TABLE PRERREQ
-    ADD CONSTRAINT PRERREQ_PENSUM_FK FOREIGN KEY
-    (
-     PENSUM_CURSO,
-     PENSUM_PLAN,
-     PENSUM_CARRERA
-    )
-    REFERENCES PENSUM
-    (
-     CURSO_CODIGOCURSO,
-     PLAN_PLAN,
-     PLAN_CARRERA_CARRERA
-    )
-    NOT DEFERRABLE
-;
-
-ALTER TABLE SECCION
-    ADD CONSTRAINT SECCION_CATED_FK FOREIGN KEY
-    (
-     CATEDRATICO_CATEDRATICO
-    )
-    REFERENCES CATEDRATICO
-    (
-     CATEDRATICO
-    )
-    NOT DEFERRABLE
-;
-
-ALTER TABLE SECCION
-    ADD CONSTRAINT SECCION_CURSO_FK FOREIGN KEY
-    (
-     CURSO_CODIGOCURSO
-    )
-    REFERENCES CURSO
-    (
-     CODIGOCURSO
-    )
-    NOT DEFERRABLE
-;
-
-
-
--- Informe de Resumen de Oracle SQL Developer Data Modeler:
---
--- CREATE TABLE                            14
--- CREATE INDEX                             0
--- ALTER TABLE                             38
--- CREATE VIEW                              0
--- ALTER VIEW                               0
--- CREATE PACKAGE                           0
--- CREATE PACKAGE BODY                      0
--- CREATE PROCEDURE                         0
--- CREATE FUNCTION                          0
--- CREATE TRIGGER                           0
--- ALTER TRIGGER                            0
--- CREATE COLLECTION TYPE                   0
--- CREATE STRUCTURED TYPE                   0
--- CREATE STRUCTURED TYPE BODY              0
--- CREATE CLUSTER                           0
--- CREATE CONTEXT                           0
--- CREATE DATABASE                          0
--- CREATE DIMENSION                         0
--- CREATE DIRECTORY                         0
--- CREATE DISK GROUP                        0
--- CREATE ROLE                              0
--- CREATE ROLLBACK SEGMENT                  0
--- CREATE SEQUENCE                          0
--- CREATE MATERIALIZED VIEW                 0
--- CREATE MATERIALIZED VIEW LOG             0
--- CREATE SYNONYM                           0
--- CREATE TABLESPACE                        0
--- CREATE USER                              0
---
--- DROP TABLESPACE                          0
--- DROP DATABASE                            0
---
--- REDACTION POLICY                         0
---
--- ORDS DROP SCHEMA                         0
--- ORDS ENABLE SCHEMA                       0
--- ORDS ENABLE OBJECT                       0
---
--- ERRORS                                   0
--- WARNINGS                                 0
-
---REGLA 1
-
-CREATE OR REPLACE VIEW V_CURSOS_APROBADOS AS
-SELECT 
-    A.ESTUDIANTE_CARNET,
-    A.SECCION_CODIGOCURSO AS CODIGOCURSO,
-    I.CARRERA,
-    P.PLAN_PLAN AS PLAN,
-    A.ZONA,
-    A.NOTA,
-    P.NUMCREDITOS
-FROM ASIGNACION A
-JOIN INSCRIPCION I ON A.ESTUDIANTE_CARNET = I.CARNET
-JOIN PENSUM P ON A.SECCION_CODIGOCURSO = P.CURSO_CODIGOCURSO 
-             AND I.CARRERA = P.PLAN_CARRERA_CARRERA
-WHERE A.ZONA >= P.ZONAMINIMA 
-  AND A.NOTA >= P.NOTAAPROBACION
-  -- Validar que todos los prerrequisitos estén aprobados
-  AND NOT EXISTS (
-      SELECT 1 FROM PRERREQ PR
-      WHERE PR.PENSUM_CURSO    = P.CURSO_CODIGOCURSO
-        AND PR.PENSUM_PLAN     = P.PLAN_PLAN
-        AND PR.PENSUM_CARRERA  = P.PLAN_CARRERA_CARRERA
-        AND NOT EXISTS (
-            SELECT 1 FROM ASIGNACION A2
-            JOIN PENSUM P2 
-                ON A2.SECCION_CODIGOCURSO = P2.CURSO_CODIGOCURSO
-                AND P2.PLAN_CARRERA_CARRERA = I.CARRERA
-            WHERE A2.ESTUDIANTE_CARNET = A.ESTUDIANTE_CARNET
-              AND A2.SECCION_CODIGOCURSO = PR.CURSO_PREREQUISITO
-              AND A2.NOTA >= P2.NOTAAPROBACION
-              AND A2.ZONA >= P2.ZONAMINIMA
-        )
-  )
-  -- Validar créditos prerrequisito acumulados
-  AND (
-      SELECT NVL(SUM(P3.NUMCREDITOS), 0)
-      FROM ASIGNACION A3
-      JOIN PENSUM P3 
-          ON A3.SECCION_CODIGOCURSO = P3.CURSO_CODIGOCURSO
-          AND P3.PLAN_CARRERA_CARRERA = I.CARRERA
-      WHERE A3.ESTUDIANTE_CARNET = A.ESTUDIANTE_CARNET
-        AND A3.NOTA >= P3.NOTAAPROBACION
-        AND A3.ZONA >= P3.ZONAMINIMA
-  ) >= P.CREDPRERREQUISITOS;
-
-  --REGLA 2
-
-  CREATE OR REPLACE VIEW V_PROMEDIO_ESTUDIANTE AS
-SELECT 
-    ESTUDIANTE_CARNET,
-    CARRERA,
-    PLAN,
-    ROUND(AVG(NOTA), 2) AS PROMEDIO_GENERAL
-FROM V_CURSOS_APROBADOS
-GROUP BY 
-    ESTUDIANTE_CARNET, 
-    CARRERA, 
-    PLAN;
-
-    --REGLA 3
-
-CREATE OR REPLACE VIEW V_ESTUDIANTES_CIERRE AS
-WITH CreditosEstudiante AS (
-    SELECT 
-        ESTUDIANTE_CARNET,
-        CARRERA,
-        PLAN,
-        SUM(NUMCREDITOS) AS CREDITOS_ACUMULADOS
-    FROM V_CURSOS_APROBADOS
-    GROUP BY ESTUDIANTE_CARNET, CARRERA, PLAN
-),
-CursosObligatoriosFaltantes AS (
-    SELECT 
-        I.CARNET,
-        P_PLAN.CARRERA,   -- <-- agregar CARRERA aquí
-        P_PLAN.PLAN,
-        COUNT(P_OBLIG.CURSO_CODIGOCURSO) AS FALTANTES
-    FROM INSCRIPCION I
-    JOIN PLAN P_PLAN ON I.CARRERA = P_PLAN.CARRERA
-    JOIN PENSUM P_OBLIG 
-        ON P_PLAN.PLAN    = P_OBLIG.PLAN_PLAN 
-        AND P_PLAN.CARRERA = P_OBLIG.PLAN_CARRERA_CARRERA
-    WHERE P_OBLIG.OBLIGATORIEDAD = 1
-      AND P_OBLIG.CURSO_CODIGOCURSO NOT IN (
-          SELECT CODIGOCURSO 
-          FROM V_CURSOS_APROBADOS CA 
-          WHERE CA.ESTUDIANTE_CARNET = I.CARNET 
-            AND CA.CARRERA = I.CARRERA
-      )
-    GROUP BY I.CARNET, P_PLAN.CARRERA, P_PLAN.PLAN
-)
-SELECT 
-    C.ESTUDIANTE_CARNET AS CARNET,
-    C.CARRERA,
-    C.PLAN,
-    C.CREDITOS_ACUMULADOS,
-    PL.NUMCREDITOSCIERRE
-FROM CreditosEstudiante C
-JOIN PLAN PL ON C.PLAN = PL.PLAN AND C.CARRERA = PL.CARRERA
-LEFT JOIN CursosObligatoriosFaltantes COF 
-    ON C.ESTUDIANTE_CARNET = COF.CARNET 
-    AND C.CARRERA = COF.CARRERA   -- <-- join por carrera también
-    AND C.PLAN = COF.PLAN
-WHERE C.CREDITOS_ACUMULADOS >= PL.NUMCREDITOSCIERRE
-  AND NVL(COF.FALTANTES, 0) = 0
-  AND EXTRACT(YEAR FROM SYSDATE) <= PL.ANIOFINAL; -- vigencia del plan
-
--- REGLA 4
-
-  CREATE OR REPLACE VIEW V_MEJOR_ESTUDIANTE AS
-WITH EstudiantesConReprobados AS (
-    -- Identificamos a los que han perdido al menos un curso
-    SELECT DISTINCT A.ESTUDIANTE_CARNET
-    FROM ASIGNACION A
-    JOIN INSCRIPCION I ON A.ESTUDIANTE_CARNET = I.CARNET
-    JOIN PENSUM P ON A.SECCION_CODIGOCURSO = P.CURSO_CODIGOCURSO 
-                 AND I.CARRERA = P.PLAN_CARRERA_CARRERA
-    WHERE A.NOTA IS NOT NULL 
-      AND (A.ZONA < P.ZONAMINIMA OR A.NOTA < P.NOTAAPROBACION)
-)
-SELECT 
-    PE.ESTUDIANTE_CARNET,
-    E.NOMBRE,
-    PE.CARRERA,
-    PE.PROMEDIO_GENERAL
-FROM V_PROMEDIO_ESTUDIANTE PE
-JOIN ESTUDIANTE E ON PE.ESTUDIANTE_CARNET = E.CARNET
-WHERE PE.ESTUDIANTE_CARNET NOT IN (SELECT ESTUDIANTE_CARNET FROM EstudiantesConReprobados)
-ORDER BY PE.PROMEDIO_GENERAL DESC
-FETCH FIRST 1 ROWS ONLY;
+-- ============================================================
+-- SBD1 Proyecto 2 - DDL + Seed Data
+-- Compatible con Oracle XE 21c & Docker gvenzl/oracle-xe
+-- ============================================================
+
+-- 1. LIMPIEZA (Orden inverso a dependencias)
+DROP TABLE RESPUESTA_PRACTICO_USUARIO CASCADE CONSTRAINTS;
+DROP TABLE RESPUESTA_USUARIO CASCADE CONSTRAINTS;
+DROP TABLE PREGUNTA_PRACTICO CASCADE CONSTRAINTS;
+DROP TABLE PREGUNTA CASCADE CONSTRAINTS;
+DROP TABLE EXAMEN CASCADE CONSTRAINTS;
+DROP TABLE CORRELATIVO CASCADE CONSTRAINTS;
+DROP TABLE REGISTRO CASCADE CONSTRAINTS;
+DROP TABLE UBICACION CASCADE CONSTRAINTS;
+DROP TABLE ESCUELA_AUTOMOV CASCADE CONSTRAINTS;
+DROP TABLE CENTRO_EVAL CASCADE CONSTRAINTS;
+DROP TABLE MUNICIPIO CASCADE CONSTRAINTS;
+DROP TABLE DEPARTAMENTO CASCADE CONSTRAINTS;
+DROP TABLE LICENCIA CASCADE CONSTRAINTS;
+
+-- 2. CREACIÓN DE TABLAS (PKs Autoincrementales + Tipos Corregidos)
+CREATE TABLE LICENCIA (
+    codigo      CHAR(1) PRIMARY KEY,
+    descripcion VARCHAR2(100) NOT NULL
+);
+
+CREATE TABLE DEPARTAMENTO (
+    id_departamento NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre          VARCHAR2(50) NOT NULL,
+    codigo          VARCHAR2(2) NOT NULL
+);
+
+CREATE TABLE MUNICIPIO (
+    id_municipio                 NUMBER GENERATED ALWAYS AS IDENTITY,
+    departamento_id_departamento NUMBER NOT NULL,
+    nombre                       VARCHAR2(50) NOT NULL,
+    codigo                       VARCHAR2(2) NOT NULL,
+    CONSTRAINT MUNICIPIO_PK PRIMARY KEY (id_municipio, departamento_id_departamento),
+    CONSTRAINT MUNICIPIO_DEPARTAMENTO_FK FOREIGN KEY (departamento_id_departamento) REFERENCES DEPARTAMENTO(id_departamento)
+);
+
+CREATE TABLE CENTRO_EVAL (
+    no_centro NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre    VARCHAR2(100) NOT NULL
+);
+
+CREATE TABLE ESCUELA_AUTOMOV (
+    no_aut    NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre    VARCHAR2(100) NOT NULL,
+    direccion VARCHAR2(150) NOT NULL,
+    acuerdo   VARCHAR2(20) NOT NULL
+);
+
+CREATE TABLE UBICACION (
+    escuela_id_escuela NUMBER NOT NULL,
+    centro_id_centro   NUMBER NOT NULL,
+    CONSTRAINT UBICACION_PK PRIMARY KEY (escuela_id_escuela, centro_id_centro),
+    CONSTRAINT UBICACION_ESCUELA_FK FOREIGN KEY (escuela_id_escuela) REFERENCES ESCUELA_AUTOMOV(no_aut),
+    CONSTRAINT UBICACION_CENTRO_FK FOREIGN KEY (centro_id_centro) REFERENCES CENTRO_EVAL(no_centro)
+);
+
+CREATE TABLE REGISTRO (
+    id_registro                            NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    ubicacion_escuela_id_escuela           NUMBER NOT NULL,
+    ubicacion_centro_id_centro             NUMBER NOT NULL,
+    municipio_id_municipio                 NUMBER NOT NULL,
+    municipio_departamento_id_departamento NUMBER NOT NULL,
+    fecha                                  DATE NOT NULL,
+    tipo_tramite                           VARCHAR2(50) NOT NULL,
+    tipo_licencia                          CHAR(1) NOT NULL,
+    nombre_completo                        VARCHAR2(100) NOT NULL,
+    genero                                 CHAR(1) NOT NULL,
+    CONSTRAINT REGISTRO_UBICACION_FK FOREIGN KEY (ubicacion_escuela_id_escuela, ubicacion_centro_id_centro) REFERENCES UBICACION(escuela_id_escuela, centro_id_centro),
+    CONSTRAINT REGISTRO_MUNICIPIO_FK FOREIGN KEY (municipio_id_municipio, municipio_departamento_id_departamento) REFERENCES MUNICIPIO(id_municipio, departamento_id_departamento),
+    CONSTRAINT REGISTRO_LICENCIA_FK FOREIGN KEY (tipo_licencia) REFERENCES LICENCIA(codigo)
+);
+
+CREATE TABLE CORRELATIVO (
+    id_correlativo NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    fecha          DATE NOT NULL,
+    no_examen      NUMBER NOT NULL
+);
+
+CREATE TABLE EXAMEN (
+    id_examen                                       NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    registro_id_registro                            NUMBER NOT NULL,
+    correlativo_id_correlativo                      NUMBER NOT NULL,
+    registro_id_escuela                             NUMBER NOT NULL,
+    registro_id_centro                              NUMBER NOT NULL,
+    registro_municipio_id_municipio                 NUMBER NOT NULL,
+    registro_municipio_departamento_id_departamento NUMBER NOT NULL,
+    CONSTRAINT EXAMEN_REGISTRO_FK FOREIGN KEY (registro_id_registro) REFERENCES REGISTRO(id_registro),
+    CONSTRAINT EXAMEN_CORRELATIVO_FK FOREIGN KEY (correlativo_id_correlativo) REFERENCES CORRELATIVO(id_correlativo)
+);
+
+CREATE TABLE PREGUNTA (
+    id_pregunta        NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    pregunta_texto     VARCHAR2(300) NOT NULL,
+    respuesta_a        VARCHAR2(200) NOT NULL,
+    respuesta_b        VARCHAR2(200) NOT NULL,
+    respuesta_c        VARCHAR2(200) NOT NULL,
+    respuesta_d        VARCHAR2(200),
+    respuesta_correcta VARCHAR2(1) NOT NULL
+);
+
+CREATE TABLE PREGUNTA_PRACTICO (
+    id_pregunta_practico NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    pregunta_texto       VARCHAR2(200) NOT NULL,
+    punteo               NUMBER NOT NULL
+);
+
+CREATE TABLE RESPUESTA_USUARIO (
+    id_respuesta_usuario NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    pregunta_id_pregunta NUMBER NOT NULL,
+    examen_id_examen     NUMBER NOT NULL,
+    respuesta            VARCHAR2(1) NOT NULL,
+    CONSTRAINT RESP_USU_PREGUNTA_FK FOREIGN KEY (pregunta_id_pregunta) REFERENCES PREGUNTA(id_pregunta),
+    CONSTRAINT RESP_USU_EXAMEN_FK FOREIGN KEY (examen_id_examen) REFERENCES EXAMEN(id_examen)
+);
+
+CREATE TABLE RESPUESTA_PRACTICO_USUARIO (
+    id_respuesta_practico                  NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    pregunta_practico_id_pregunta_practico NUMBER NOT NULL,
+    examen_id_examen                       NUMBER NOT NULL,
+    nota                                   NUMBER NOT NULL,
+    CONSTRAINT RESP_PRAC_PREGUNTA_FK FOREIGN KEY (pregunta_practico_id_pregunta_practico) REFERENCES PREGUNTA_PRACTICO(id_pregunta_practico),
+    CONSTRAINT RESP_PRAC_EXAMEN_FK FOREIGN KEY (examen_id_examen) REFERENCES EXAMEN(id_examen)
+);
+
+-- 3. CARGA DE DATOS (Seed desde JSON, orden estricto por FKs)
+-- LICENCIA (Faltaba en el JSON, requerida por REGISTRO)
+INSERT INTO LICENCIA (codigo, descripcion) VALUES ('A', 'Motocicleta');
+INSERT INTO LICENCIA (codigo, descripcion) VALUES ('B', 'Automóvil particular');
+INSERT INTO LICENCIA (codigo, descripcion) VALUES ('C', 'Camión/Vehículo pesado');
+
+-- DEPARTAMENTO
+INSERT INTO DEPARTAMENTO (nombre, codigo) VALUES ('Guatemala', '01');
+INSERT INTO DEPARTAMENTO (nombre, codigo) VALUES ('Sacatepéquez', '03');
+INSERT INTO DEPARTAMENTO (nombre, codigo) VALUES ('Escuintla', '05');
+
+-- MUNICIPIO
+INSERT INTO MUNICIPIO (departamento_id_departamento, nombre, codigo) VALUES (1, 'Guatemala', '01');
+INSERT INTO MUNICIPIO (departamento_id_departamento, nombre, codigo) VALUES (1, 'Mixco', '02');
+INSERT INTO MUNICIPIO (departamento_id_departamento, nombre, codigo) VALUES (1, 'Villa Nueva', '03');
+INSERT INTO MUNICIPIO (departamento_id_departamento, nombre, codigo) VALUES (3, 'Escuintla', '01');
+INSERT INTO MUNICIPIO (departamento_id_departamento, nombre, codigo) VALUES (2, 'Antigua Guatemala', '01');
+
+-- CENTRO_EVAL
+INSERT INTO CENTRO_EVAL (nombre) VALUES ('Centro de Evaluación Zona 12');
+INSERT INTO CENTRO_EVAL (nombre) VALUES ('Centro de Evaluación Antigua Guatemala');
+INSERT INTO CENTRO_EVAL (nombre) VALUES ('Centro de Evaluación Escuintla');
+
+-- ESCUELA_AUTOMOV
+INSERT INTO ESCUELA_AUTOMOV (nombre, direccion, acuerdo) VALUES ('Escuela de Manejo AutoMaster', 'Avenida Reforma 15-45, Zona 10', 'ESC-AM-001');
+INSERT INTO ESCUELA_AUTOMOV (nombre, direccion, acuerdo) VALUES ('Academia Vial GuateDrive', 'Boulevard Los Próceres 18-20, Zona 10', 'ESC-GD-002');
+INSERT INTO ESCUELA_AUTOMOV (nombre, direccion, acuerdo) VALUES ('Instituto de Conducción Segura', 'Calzada Roosevelt 25-30, Zona 11', 'ESC-ICS-003');
+
+-- UBICACION
+INSERT INTO UBICACION (escuela_id_escuela, centro_id_centro) VALUES (1, 1);
+INSERT INTO UBICACION (escuela_id_escuela, centro_id_centro) VALUES (1, 2);
+INSERT INTO UBICACION (escuela_id_escuela, centro_id_centro) VALUES (2, 1);
+INSERT INTO UBICACION (escuela_id_escuela, centro_id_centro) VALUES (3, 2);
+INSERT INTO UBICACION (escuela_id_escuela, centro_id_centro) VALUES (3, 3);
+
+-- REGISTRO
+INSERT INTO REGISTRO (ubicacion_escuela_id_escuela, ubicacion_centro_id_centro, municipio_id_municipio, municipio_departamento_id_departamento, fecha, tipo_tramite, tipo_licencia, nombre_completo, genero)
+VALUES (1, 1, 1, 1, TO_DATE('2025-01-15', 'YYYY-MM-DD'), 'Licencia de Conducir', 'A', 'Juan Carlos López García', 'M');
+INSERT INTO REGISTRO (ubicacion_escuela_id_escuela, ubicacion_centro_id_centro, municipio_id_municipio, municipio_departamento_id_departamento, fecha, tipo_tramite, tipo_licencia, nombre_completo, genero)
+VALUES (1, 2, 2, 1, TO_DATE('2025-01-15', 'YYYY-MM-DD'), 'Licencia de Conducir', 'B', 'María Elena Rodríguez Morales', 'F');
+INSERT INTO REGISTRO (ubicacion_escuela_id_escuela, ubicacion_centro_id_centro, municipio_id_municipio, municipio_departamento_id_departamento, fecha, tipo_tramite, tipo_licencia, nombre_completo, genero)
+VALUES (2, 1, 3, 1, TO_DATE('2025-01-16', 'YYYY-MM-DD'), 'Licencia de Conducir', 'A', 'Carlos Alberto Méndez Castillo', 'M');
+INSERT INTO REGISTRO (ubicacion_escuela_id_escuela, ubicacion_centro_id_centro, municipio_id_municipio, municipio_departamento_id_departamento, fecha, tipo_tramite, tipo_licencia, nombre_completo, genero)
+VALUES (3, 3, 4, 3, TO_DATE('2025-01-17', 'YYYY-MM-DD'), 'Licencia de Conducir', 'A', 'Ana Sofía Guerrero Díaz', 'F');
+INSERT INTO REGISTRO (ubicacion_escuela_id_escuela, ubicacion_centro_id_centro, municipio_id_municipio, municipio_departamento_id_departamento, fecha, tipo_tramite, tipo_licencia, nombre_completo, genero)
+VALUES (2, 2, 5, 2, TO_DATE('2025-01-18', 'YYYY-MM-DD'), 'Licencia de Conducir', 'B', 'Pedro José Hernández Ruiz', 'M');
+
+-- CORRELATIVO
+INSERT INTO CORRELATIVO (fecha, no_examen) VALUES (TO_DATE('2025-01-15', 'YYYY-MM-DD'), 1);
+INSERT INTO CORRELATIVO (fecha, no_examen) VALUES (TO_DATE('2025-01-15', 'YYYY-MM-DD'), 2);
+INSERT INTO CORRELATIVO (fecha, no_examen) VALUES (TO_DATE('2025-01-16', 'YYYY-MM-DD'), 3);
+INSERT INTO CORRELATIVO (fecha, no_examen) VALUES (TO_DATE('2025-01-17', 'YYYY-MM-DD'), 4);
+INSERT INTO CORRELATIVO (fecha, no_examen) VALUES (TO_DATE('2025-01-18', 'YYYY-MM-DD'), 5);
+
+-- EXAMEN
+INSERT INTO EXAMEN (registro_id_registro, correlativo_id_correlativo, registro_id_escuela, registro_id_centro, registro_municipio_id_municipio, registro_municipio_departamento_id_departamento)
+VALUES (1, 1, 1, 1, 1, 1);
+INSERT INTO EXAMEN (registro_id_registro, correlativo_id_correlativo, registro_id_escuela, registro_id_centro, registro_municipio_id_municipio, registro_municipio_departamento_id_departamento)
+VALUES (2, 2, 1, 2, 2, 1);
+INSERT INTO EXAMEN (registro_id_registro, correlativo_id_correlativo, registro_id_escuela, registro_id_centro, registro_municipio_id_municipio, registro_municipio_departamento_id_departamento)
+VALUES (3, 3, 2, 1, 3, 1);
+INSERT INTO EXAMEN (registro_id_registro, correlativo_id_correlativo, registro_id_escuela, registro_id_centro, registro_municipio_id_municipio, registro_municipio_departamento_id_departamento)
+VALUES (4, 4, 3, 3, 4, 3);
+INSERT INTO EXAMEN (registro_id_registro, correlativo_id_correlativo, registro_id_escuela, registro_id_centro, registro_municipio_id_municipio, registro_municipio_departamento_id_departamento)
+VALUES (5, 5, 2, 2, 5, 2);
+
+-- PREGUNTA
+INSERT INTO PREGUNTA (pregunta_texto, respuesta_a, respuesta_b, respuesta_c, respuesta_d, respuesta_correcta)
+VALUES ('¿Cuál es la distancia mínima que debe mantener entre vehículos en carretera?', '2 metros', '3 segundos de distancia', '5 metros', '1 segundo de distancia', 'B');
+INSERT INTO PREGUNTA (pregunta_texto, respuesta_a, respuesta_b, respuesta_c, respuesta_d, respuesta_correcta)
+VALUES ('¿Qué significa una señal de alto?', 'Reducir velocidad', 'Detenerse completamente', 'Ceder el paso', 'Continuar con precaución', 'B');
+INSERT INTO PREGUNTA (pregunta_texto, respuesta_a, respuesta_b, respuesta_c, respuesta_d, respuesta_correcta)
+VALUES ('¿Cuál es el límite de velocidad en zona escolar?', '20 km/h', '30 km/h', '40 km/h', '50 km/h', 'A');
+INSERT INTO PREGUNTA (pregunta_texto, respuesta_a, respuesta_b, respuesta_c, respuesta_d, respuesta_correcta)
+VALUES ('¿Qué debe hacer al ver una ambulancia con sirena activada?', 'Mantener velocidad', 'Acelerar para salir del camino', 'Orillarse y detenerse', 'Ignorar la sirena', 'C');
+
+-- PREGUNTA_PRACTICO
+INSERT INTO PREGUNTA_PRACTICO (pregunta_texto, punteo) VALUES ('Realizar estacionamiento en paralelo en un espacio de 6 metros', 20);
+INSERT INTO PREGUNTA_PRACTICO (pregunta_texto, punteo) VALUES ('Conducir en reversa por 50 metros manteniendo trayectoria recta', 15);
+INSERT INTO PREGUNTA_PRACTICO (pregunta_texto, punteo) VALUES ('Maniobra de tres puntos en espacio reducido', 25);
+INSERT INTO PREGUNTA_PRACTICO (pregunta_texto, punteo) VALUES ('Conducción en zona urbana respetando señales de tránsito', 30);
+
+-- RESPUESTA_USUARIO
+INSERT INTO RESPUESTA_USUARIO (pregunta_id_pregunta, examen_id_examen, respuesta) VALUES (1, 1, 'B');
+INSERT INTO RESPUESTA_USUARIO (pregunta_id_pregunta, examen_id_examen, respuesta) VALUES (2, 1, 'B');
+INSERT INTO RESPUESTA_USUARIO (pregunta_id_pregunta, examen_id_examen, respuesta) VALUES (3, 2, 'A');
+INSERT INTO RESPUESTA_USUARIO (pregunta_id_pregunta, examen_id_examen, respuesta) VALUES (4, 2, 'C');
+INSERT INTO RESPUESTA_USUARIO (pregunta_id_pregunta, examen_id_examen, respuesta) VALUES (1, 3, 'B');
+INSERT INTO RESPUESTA_USUARIO (pregunta_id_pregunta, examen_id_examen, respuesta) VALUES (2, 3, 'A');
+
+-- RESPUESTA_PRACTICO_USUARIO
+INSERT INTO RESPUESTA_PRACTICO_USUARIO (pregunta_practico_id_pregunta_practico, examen_id_examen, nota) VALUES (1, 1, 18);
+INSERT INTO RESPUESTA_PRACTICO_USUARIO (pregunta_practico_id_pregunta_practico, examen_id_examen, nota) VALUES (2, 1, 13);
+INSERT INTO RESPUESTA_PRACTICO_USUARIO (pregunta_practico_id_pregunta_practico, examen_id_examen, nota) VALUES (3, 2, 22);
+INSERT INTO RESPUESTA_PRACTICO_USUARIO (pregunta_practico_id_pregunta_practico, examen_id_examen, nota) VALUES (4, 2, 28);
+INSERT INTO RESPUESTA_PRACTICO_USUARIO (pregunta_practico_id_pregunta_practico, examen_id_examen, nota) VALUES (1, 3, 15);
+
+COMMIT;
