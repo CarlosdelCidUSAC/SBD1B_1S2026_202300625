@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SBD1 — Centros de Evaluación</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#fff;font-family:'VT323','Chicago','Charcoal',monospace;font-size:16px;color:#000;min-height:100vh;user-select:none}
+  .menubar{position:fixed;top:0;left:0;right:0;z-index:100;height:22px;background:#fff;border-bottom:1px solid #000;display:flex;align-items:center;padding:0 8px;gap:16px;font-size:14px}
+  .menubar .apple{font-weight:bold;font-size:14px}
+  .menubar span{cursor:default}
+  .desktop{padding-top:30px;min-height:100vh;display:flex;justify-content:center;align-items:flex-start}
+  .window{margin-top:40px;width:820px;max-width:95vw;border:2px solid #000;background:#fff;box-shadow:4px 4px 0 rgba(0,0,0,.15)}
+  .titlebar{height:22px;background:repeating-linear-gradient(0deg,#fff 0px,#fff 1px,#000 1px,#000 2px);display:flex;align-items:center;justify-content:space-between;padding:0 4px;border-bottom:1px solid #000}
+  .titlebar .close-box{width:14px;height:14px;border:1px solid #000;background:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;line-height:1;cursor:pointer}
+  .titlebar .title{color:#000;font-size:14px;text-align:center;flex:1;background:#fff;margin:0 8px}
+  .titlebar .zoom-box{width:14px;height:14px;border:1px solid #000;background:#fff;font-size:10px;display:flex;align-items:center;justify-content:center}
+  .toolbar{display:flex;align-items:center;gap:6px;padding:6px 8px;border-bottom:1px solid #000;flex-wrap:wrap}
+  .toolbar label{font-size:14px;white-space:nowrap}
+  .toolbar select{font-family:'VT323',monospace;font-size:14px;border:1px solid #000;background:#fff;color:#000;padding:2px 4px;cursor:pointer;min-width:180px}
+  .toolbar button{font-family:'VT323',monospace;font-size:14px;border:1px solid #000;background:#fff;color:#000;padding:3px 12px;cursor:pointer;transition:background .1s,color .1s}
+  .toolbar button:hover:not(:disabled){background:#000;color:#fff}
+  .toolbar button:active:not(:disabled){background:#000;color:#fff}
+  .toolbar button:disabled{opacity:.35;cursor:not-allowed}
+  .toolbar .sep{width:1px;height:20px;background:#000;margin:0 4px}
+  .toolbar .search-wrap{display:flex;align-items:center;gap:4px;margin-left:auto}
+  .toolbar .search-wrap input{font-family:'VT323',monospace;font-size:14px;border:1px solid #000;background:#fff;color:#000;padding:2px 6px;width:130px}
+  .content{padding:8px;min-height:280px;max-height:60vh;overflow:auto;outline:none}
+  .content::-webkit-scrollbar{width:14px}
+  .content::-webkit-scrollbar-track{background:#fff;border-left:1px solid #000}
+  .content::-webkit-scrollbar-thumb{background:#000;border:2px solid #fff}
+  .content::-webkit-scrollbar-button{display:block;height:14px;background:#fff;border:1px solid #000}
+  table.data-table{width:100%;border-collapse:collapse;font-size:14px}
+  table.data-table th{text-align:left;padding:4px 6px;border:1px solid #000;background:#000;color:#fff;font-weight:normal;position:sticky;top:0;cursor:pointer;white-space:nowrap;user-select:none}
+  table.data-table th:hover{background:#333}
+  table.data-table th .sort-arrow{margin-left:4px;opacity:.5}
+  table.data-table th.sorted .sort-arrow{opacity:1}
+  table.data-table td{padding:3px 6px;border:1px solid #000;white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis}
+  table.data-table tr:hover td{background:#000;color:#fff;cursor:pointer}
+  table.data-table tr.selected td{background:#000;color:#fff}
+  .statusbar{height:20px;border-top:1px solid #000;display:flex;align-items:center;padding:0 8px;font-size:12px;gap:8px}
+  .statusbar .count{font-weight:bold}
+  .loading-bar{display:none;height:3px;background:repeating-linear-gradient(90deg,#000 0,#000 8px,#fff 8px,#fff 16px);background-size:32px;animation:march .4s linear infinite}
+  .loading-bar.active{display:block}
+  @keyframes march{to{background-position:32px 0}}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.7);z-index:200;justify-content:center;align-items:center}
+  .modal-overlay.active{display:flex}
+  .modal{width:480px;max-width:95vw;border:2px solid #000;background:#fff;box-shadow:4px 4px 0 rgba(0,0,0,.15)}
+  .modal .titlebar{cursor:default}
+  .modal .body{padding:12px;max-height:60vh;overflow-y:auto}
+  .modal .field{margin-bottom:8px}
+  .modal .field label{display:block;font-size:14px;margin-bottom:2px}
+  .modal .field input,.modal .field select{font-family:'VT323',monospace;font-size:14px;border:1px solid #000;background:#fff;color:#000;padding:4px 6px;width:100%}
+  .modal .field input:focus{outline:2px solid #000;outline-offset:-2px}
+  .modal .field .hint{font-size:12px;color:#666}
+  .modal .field .err-msg{font-size:12px;color:#fff;background:#000;padding:1px 4px;display:none}
+  .modal .field.has-error input{border-color:#000;outline:2px solid #000;outline-offset:-2px}
+  .modal .field.has-error .err-msg{display:block}
+  .modal .buttons{display:flex;justify-content:flex-end;gap:6px;margin-top:12px;padding-top:8px;border-top:1px solid #000}
+  .modal .buttons button{font-family:'VT323',monospace;font-size:14px;border:1px solid #000;background:#fff;color:#000;padding:4px 16px;cursor:pointer;min-width:70px}
+  .modal .buttons button:hover{background:#000;color:#fff}
+  .modal .buttons button.primary{background:#000;color:#fff}
+  .modal .buttons button.primary:hover{background:#fff;color:#000}
+  .alert{padding:8px 12px;margin:5px 8px;border:1px solid #000;font-size:14px;display:none;animation:fadein .2s}
+  @keyframes fadein{from{opacity:0}to{opacity:1}}
+  .alert.error{display:block;background:#000;color:#fff}
+  .alert.info{display:block}
+  .console-line{font-family:'VT323',monospace;font-size:13px;padding:2px 8px;white-space:pre-wrap}
+  .console-line.err{color:#000;background:#eee}
+  .empty-state{padding:32px;text-align:center;font-size:14px;color:#666}
+</style>
+</head>
+<body>
+
+<div class="menubar">
+  <span class="apple">&#x269B;</span>
+  <span>File</span>
+  <span>Edit</span>
+  <span>View</span>
+  <span>Special</span>
+  <span style="margin-left:auto;">SBD1 · Centros de Evaluación</span>
+</div>
+
+<div class="desktop">
+  <div class="window" id="mainWindow">
+    <div class="titlebar">
+      <div class="close-box" title="Cerrar">&#x25A0;</div>
+      <div class="title" id="windowTitle">SBD1 — CRUD Interface v1.1</div>
+      <div class="zoom-box">&#x25A1;</div>
+    </div>
+
+    <div class="toolbar">
+      <label>Tabla:</label>
+      <select id="tableSelect" onchange="onTableChange()"></select>
+      <button id="btnOpen" onclick="loadData()">Abrir</button>
+      <span class="sep"></span>
+      <button id="btnNew" onclick="openCreateModal()" disabled title="Ctrl+N">Nuevo</button>
+      <button id="btnEdit" onclick="openEditModal()" disabled title="Ctrl+E · doble clic">Editar</button>
+      <button id="btnDelete" onclick="deleteSelected()" disabled title="Supr">Eliminar</button>
+      <span class="sep"></span>
+      <button id="btnRefresh" onclick="loadData()" disabled title="F5">Actualizar</button>
+      <span class="sep"></span>
+      <div class="search-wrap">
+        <label>Buscar:</label>
+        <input id="searchInput" type="text" placeholder="filtrar..." oninput="applyFilter()" title="Ctrl+F" disabled>
+      </div>
+    </div>
+
+    <div class="loading-bar" id="loadingBar"></div>
+    <div id="alertBox"></div>
+
+    <div class="content" id="tableContent" tabindex="0">
+      <div class="console-line">Seleccione una tabla y haga clic en <b>Abrir</b> para cargar registros.</div>
+      <div class="console-line" style="margin-top:8px;">&#x25B6; API en <b>http://localhost:3000</b></div>
+    </div>
+
+    <div class="statusbar">
+      <span class="count" id="rowCount">0 registros</span>
+      <span id="filterCount" style="color:#666;font-size:12px;"></span>
+      <span style="margin-left:auto;" id="statusMsg">Listo.</span>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox">
+    <div class="titlebar">
+      <div class="close-box" onclick="closeModal()">&#x25A0;</div>
+      <div class="title" id="modalTitle">Registro</div>
+      <div class="zoom-box">&#x25A1;</div>
+    </div>
+    <div class="body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const tableConfig = {
+  centros:{name:'CENTRO_EVAL',label:'Centros de Evaluación',endpoint:'/api/centros',pk:'no_centro',pkLabel:'id',fields:[{name:'no_centro',label:'No. Centro',type:'number',pk:true},{name:'nombre',label:'Nombre',type:'text',required:true}]},
+  escuelas:{name:'ESCUELA_AUTOMOV',label:'Escuelas de Manejo',endpoint:'/api/escuelas',pk:'no_aut',pkLabel:'id',fields:[{name:'no_aut',label:'No. Autoescuela',type:'number',pk:true},{name:'nombre',label:'Nombre',type:'text',required:true},{name:'direccion',label:'Dirección',type:'text',required:true},{name:'acuerdo',label:'Acuerdo',type:'text',required:true}]},
+  licencias:{name:'LICENCIA',label:'Licencias',endpoint:'/api/licencias',pk:'codigo',pkLabel:'id',fields:[{name:'codigo',label:'Código',type:'text',pk:true,maxlen:1},{name:'descripcion',label:'Descripción',type:'text',required:true}]},
+  departamentos:{name:'DEPARTAMENTO',label:'Departamentos',endpoint:'/api/departamentos',pk:'id_departamento',pkLabel:'id',fields:[{name:'id_departamento',label:'ID',type:'number',pk:true},{name:'nombre',label:'Nombre',type:'text',required:true},{name:'codigo',label:'Código Depto.',type:'text',required:true}]},
+  municipios:{name:'MUNICIPIO',label:'Municipios',endpoint:'/api/municipios',pk:'id_municipio',pkLabel:'id',fields:[{name:'id_municipio',label:'ID Municipio',type:'number',pk:true},{name:'departamento_id_departamento',label:'Departamento ID',type:'number',required:true},{name:'nombre',label:'Nombre',type:'text',required:true},{name:'codigo',label:'Código',type:'text',required:true}]},
+  ubicaciones:{name:'UBICACION',label:'Ubicaciones',endpoint:'/api/ubicaciones',pk:null,pkLabel:null,compoundPk:true,fields:[{name:'escuela_id_escuela',label:'Escuela ID',type:'number',required:true},{name:'centro_id_centro',label:'Centro ID',type:'number',required:true}]},
+  registros:{name:'REGISTRO',label:'Registros',endpoint:'/api/registros',pk:'id_registro',pkLabel:'id',fields:[{name:'id_registro',label:'ID',type:'number',pk:true},{name:'ubicacion_escuela_id_escuela',label:'Escuela ID',type:'number',required:true},{name:'ubicacion_centro_id_centro',label:'Centro ID',type:'number',required:true},{name:'municipio_id_municipio',label:'Municipio ID',type:'number',required:true},{name:'municipio_departamento_id_departamento',label:'Mun. Depto. ID',type:'number',required:true},{name:'fecha',label:'Fecha',type:'text',required:true,hint:'AAAA-MM-DD'},{name:'tipo_tramite',label:'Tipo Trámite',type:'text',required:true},{name:'tipo_licencia',label:'Tipo Licencia',type:'text',required:true},{name:'nombre_completo',label:'Nombre Completo',type:'text',required:true},{name:'genero',label:'Género',type:'text',required:true,maxlen:1}]},
+  correlativos:{name:'CORRELATIVO',label:'Correlativos',endpoint:'/api/correlativos',pk:'id_correlativo',pkLabel:'id',fields:[{name:'id_correlativo',label:'ID',type:'number',pk:true},{name:'fecha',label:'Fecha',type:'text',required:true,hint:'AAAA-MM-DD'},{name:'no_examen',label:'No. Examen',type:'number',required:true}]},
+  examenes:{name:'EXAMEN',label:'Exámenes',endpoint:'/api/examenes',pk:'id_examen',pkLabel:'id',fields:[{name:'id_examen',label:'ID',type:'number',pk:true},{name:'registro_id_registro',label:'Registro ID',type:'number',required:true},{name:'correlativo_id_correlativo',label:'Correlativo ID',type:'number',required:true},{name:'registro_id_escuela',label:'Escuela ID',type:'number',required:true},{name:'registro_id_centro',label:'Centro ID',type:'number',required:true},{name:'registro_municipio_id_municipio',label:'Municipio ID',type:'number',required:true},{name:'registro_municipio_departamento_id_departamento',label:'Mun. Depto. ID',type:'number',required:true}]},
+  preguntas:{name:'PREGUNTA',label:'Preguntas Teóricas',endpoint:'/api/preguntas',pk:'id_pregunta',pkLabel:'id',fields:[{name:'id_pregunta',label:'ID',type:'number',pk:true},{name:'pregunta_texto',label:'Pregunta',type:'text',required:true},{name:'respuesta_a',label:'Respuesta A',type:'text',required:true},{name:'respuesta_b',label:'Respuesta B',type:'text',required:true},{name:'respuesta_c',label:'Respuesta C',type:'text',required:true},{name:'respuesta_d',label:'Respuesta D',type:'text',required:false},{name:'respuesta_correcta',label:'Correcta',type:'text',required:true,maxlen:1}]},
+  'preguntas-practico':{name:'PREGUNTA_PRACTICO',label:'Preguntas Prácticas',endpoint:'/api/preguntas-practico',pk:'id_pregunta_practico',pkLabel:'id',fields:[{name:'id_pregunta_practico',label:'ID',type:'number',pk:true},{name:'pregunta_texto',label:'Pregunta',type:'text',required:true},{name:'punteo',label:'Punteo',type:'number',required:true}]},
+  'respuestas-usuario':{name:'RESPUESTA_USUARIO',label:'Respuestas Teóricas',endpoint:'/api/respuestas-usuario',pk:'id_respuesta_usuario',pkLabel:'id',fields:[{name:'id_respuesta_usuario',label:'ID',type:'number',pk:true},{name:'pregunta_id_pregunta',label:'Pregunta ID',type:'number',required:true},{name:'examen_id_examen',label:'Examen ID',type:'number',required:true},{name:'respuesta',label:'Respuesta',type:'text',required:true,maxlen:1}]},
+  'respuestas-practico':{name:'RESPUESTA_PRACTICO_USUARIO',label:'Respuestas Prácticas',endpoint:'/api/respuestas-practico',pk:'id_respuesta_practico',pkLabel:'id',fields:[{name:'id_respuesta_practico',label:'ID',type:'number',pk:true},{name:'pregunta_practico_id_pregunta_practico',label:'Preg. Práctica ID',type:'number',required:true},{name:'examen_id_examen',label:'Examen ID',type:'number',required:true},{name:'nota',label:'Nota',type:'number',required:true}]}
+};
+
+const API_BASE='http://localhost:3000';
+let currentTable=null,currentRows=[],filteredRows=[],selectedRowIndex=-1;
+let sortCol=null,sortDir=1;
+let alertTimer=null;
+
+function init(){
+  const sel=document.getElementById('tableSelect');
+  for(const[key,cfg]of Object.entries(tableConfig)){
+    const opt=document.createElement('option');
+    opt.value=key;
+    opt.textContent=cfg.label+' ('+cfg.name+')';
+    sel.appendChild(opt);
+  }
+}
+
+function onTableChange(){
+  currentRows=[];filteredRows=[];selectedRowIndex=-1;
+  sortCol=null;sortDir=1;
+  document.getElementById('searchInput').value='';
+  updateToolbarState(false);
+}
+
+function updateToolbarState(loaded){
+  document.getElementById('btnNew').disabled=!loaded;
+  document.getElementById('btnRefresh').disabled=!loaded;
+  document.getElementById('searchInput').disabled=!loaded;
+  updateRowButtons();
+}
+
+function updateRowButtons(){
+  const hasSel=selectedRowIndex>=0;
+  const cfg=currentTable?tableConfig[currentTable]:null;
+  document.getElementById('btnEdit').disabled=!hasSel||(cfg&&cfg.compoundPk);
+  document.getElementById('btnDelete').disabled=!hasSel;
+}
+
+function showAlert(msg,type,duration){
+  if(alertTimer)clearTimeout(alertTimer);
+  const box=document.getElementById('alertBox');
+  box.innerHTML='<div class="alert '+(type||'info')+'">'+msg+'</div>';
+  alertTimer=setTimeout(()=>{box.innerHTML='';},duration||4000);
+}
+
+function setStatus(msg){document.getElementById('statusMsg').textContent=msg;}
+
+function setLoading(on){
+  document.getElementById('loadingBar').classList.toggle('active',on);
+}
+
+function getPkValue(row){
+  const cfg=tableConfig[currentTable];
+  if(cfg.compoundPk)return row.escuela_id_escuela+'/'+row.centro_id_centro;
+  return row[cfg.pk];
+}
+
+async function loadData(){
+  const key=document.getElementById('tableSelect').value;
+  if(!key)return;
+  currentTable=key;
+  selectedRowIndex=-1;sortCol=null;sortDir=1;
+  document.getElementById('searchInput').value='';
+  document.getElementById('filterCount').textContent='';
+  const cfg=tableConfig[key];
+  document.getElementById('windowTitle').textContent='SBD1 — '+cfg.name;
+  setStatus('Cargando '+cfg.label+'...');
+  setLoading(true);
+  updateToolbarState(false);
+  try{
+    const res=await fetch(API_BASE+cfg.endpoint);
+    if(!res.ok)throw new Error(res.status+' '+res.statusText);
+    currentRows=await res.json();
+    filteredRows=[...currentRows];
+    renderTable();
+    updateRowCount();
+    updateToolbarState(true);
+    setStatus('Listo. '+currentRows.length+' registro(s) cargado(s).');
+  }catch(err){
+    showAlert('Error al conectar con la API: '+err.message,'error',8000);
+    setStatus('Error al cargar.');
+    currentRows=[];filteredRows=[];
+    document.getElementById('tableContent').innerHTML='<div class="empty-state">No se pudo cargar la tabla <b>'+cfg.name+'</b>.<br><small>Verifique que la API esté en http://localhost:3000</small></div>';
+    document.getElementById('rowCount').textContent='0 registros';
+  }finally{
+    setLoading(false);
+  }
+}
+
+function applyFilter(){
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  if(!q){filteredRows=[...currentRows];}
+  else{
+    filteredRows=currentRows.filter(row=>{
+      return Object.values(row).some(v=>String(v==null?'':v).toLowerCase().includes(q));
+    });
+  }
+  selectedRowIndex=-1;
+  if(sortCol!==null)doSort(sortCol,false);
+  else renderTable();
+  updateRowCount();
+  updateRowButtons();
+}
+
+function updateRowCount(){
+  const total=currentRows.length;
+  const shown=filteredRows.length;
+  document.getElementById('rowCount').textContent=total+' registro'+(total!==1?'s':'');
+  if(shown!==total)document.getElementById('filterCount').textContent='(mostrando '+shown+')';
+  else document.getElementById('filterCount').textContent='';
+}
+
+function doSort(colName,toggle){
+  if(toggle){
+    if(sortCol===colName)sortDir*=-1;
+    else{sortCol=colName;sortDir=1;}
+  }else{
+    sortCol=colName;
+  }
+  filteredRows.sort((a,b)=>{
+    const va=a[colName]??'';const vb=b[colName]??'';
+    if(typeof va==='number'&&typeof vb==='number')return(va-vb)*sortDir;
+    return String(va).localeCompare(String(vb))*sortDir;
+  });
+  renderTable();
+}
+
+function renderTable(){
+  const cfg=tableConfig[currentTable];
+  const container=document.getElementById('tableContent');
+  if(!filteredRows.length){
+    const msg=currentRows.length?'Ningún registro coincide con el filtro.':'No hay registros en <b>'+cfg.name+'</b>.';
+    container.innerHTML='<div class="empty-state">'+msg+'</div>';
+    return;
+  }
+  let html='<table class="data-table"><thead><tr>';
+  for(const f of cfg.fields){
+    const isSorted=sortCol===f.name;
+    const arrow=isSorted?(sortDir===1?'▲':'▼'):'▲';
+    html+='<th class="'+(isSorted?'sorted':'')+'" onclick="doSort(\''+f.name+'\',true)" title="Ordenar por '+f.label+'">'+f.label+'<span class="sort-arrow">'+arrow+'</span></th>';
+  }
+  html+='</tr></thead><tbody>';
+  for(let i=0;i<filteredRows.length;i++){
+    const row=filteredRows[i];
+    const origIdx=currentRows.indexOf(row);
+    const sel=(origIdx===selectedRowIndex)?' selected':'';
+    html+='<tr class="'+sel+'" onclick="selectRow('+i+')" ondblclick="openEditModal()" title="Doble clic para editar">';
+    for(const f of cfg.fields){
+      let val=row[f.name];if(val===null||val===undefined)val='';
+      html+='<td title="'+escapeHtml(String(val))+'">'+escapeHtml(String(val))+'</td>';
+    }
+    html+='</tr>';
+  }
+  html+='</tbody></table>';
+  container.innerHTML=html;
+}
+
+function selectRow(filteredIdx){
+  const row=filteredRows[filteredIdx];
+  selectedRowIndex=currentRows.indexOf(row);
+  renderTable();
+  const cfg=tableConfig[currentTable];
+  setStatus('Seleccionado: '+cfg.pkLabel+' = '+getPkValue(row));
+  updateRowButtons();
+}
+
+function openCreateModal(){
+  if(!currentTable){showAlert('Seleccione una tabla primero.','error');return;}
+  renderModal('Nuevo Registro — '+tableConfig[currentTable].name,null);
+  document.getElementById('modalOverlay').classList.add('active');
+  setTimeout(()=>{const f=document.getElementById('modalBody').querySelector('input:not([disabled])');if(f)f.focus();},50);
+}
+
+function openEditModal(){
+  if(!currentTable){showAlert('Seleccione una tabla primero.','error');return;}
+  if(selectedRowIndex<0){showAlert('Seleccione una fila para editar.','error');return;}
+  const cfg=tableConfig[currentTable];
+  if(cfg.compoundPk){showAlert('La edición de registros con clave compuesta no está soportada.','error');return;}
+  renderModal('Editar Registro — '+cfg.name,currentRows[selectedRowIndex]);
+  document.getElementById('modalOverlay').classList.add('active');
+  setTimeout(()=>{const f=document.getElementById('modalBody').querySelector('input:not([disabled])');if(f)f.focus();},50);
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+function renderModal(title,data){
+  document.getElementById('modalTitle').textContent=title;
+  const cfg=tableConfig[currentTable];
+  let html='';
+  for(const f of cfg.fields){
+    html+='<div class="field" id="wrap_'+f.name+'"><label>'+f.label+(f.required?' *':'')+'</label>';
+    if(f.pk&&data){
+      html+='<input type="text" value="'+escapeHtml(String(data[f.name]??''))+'" disabled>';
+      html+='<div class="hint">(clave primaria — solo lectura)</div>';
+    }else{
+      const val=data?(data[f.name]??''):'';
+      html+='<input type="'+(f.type==='number'?'number':'text')+'" id="f_'+f.name+'" value="'+escapeHtml(String(val))+'"'+(f.maxlen?' maxlength="'+f.maxlen+'"':'')+' autocomplete="off">';
+      if(f.hint)html+='<div class="hint">'+f.hint+'</div>';
+      html+='<div class="err-msg" id="err_'+f.name+'"></div>';
+    }
+    html+='</div>';
+  }
+  html+='<div class="buttons"><button onclick="closeModal()">Cancelar</button>';
+  html+=data?'<button class="primary" id="btnSave" onclick="submitForm(\'update\')">Guardar</button>':'<button class="primary" id="btnSave" onclick="submitForm(\'create\')">Crear</button>';
+  html+='</div>';
+  document.getElementById('modalBody').innerHTML=html;
+}
+
+function clearErrors(){
+  const cfg=tableConfig[currentTable];
+  for(const f of cfg.fields){
+    const w=document.getElementById('wrap_'+f.name);
+    if(w)w.classList.remove('has-error');
+    const e=document.getElementById('err_'+f.name);
+    if(e){e.textContent='';e.style.display='none';}
+  }
+}
+
+function setFieldError(name,msg){
+  const w=document.getElementById('wrap_'+name);
+  if(w)w.classList.add('has-error');
+  const e=document.getElementById('err_'+name);
+  if(e){e.textContent=msg;e.style.display='block';}
+  const inp=document.getElementById('f_'+name);
+  if(inp)inp.focus();
+}
+
+async function submitForm(action){
+  const cfg=tableConfig[currentTable];
+  clearErrors();
+  const body={};
+  let firstError=null;
+  for(const f of cfg.fields){
+    if(f.pk&&action==='update')continue;
+    const el=document.getElementById('f_'+f.name);
+    if(!el)continue;
+    let val=el.value.trim();
+    if(f.required&&!val){
+      if(!firstError)firstError=f.name;
+      setFieldError(f.name,'Este campo es requerido.');
+      continue;
+    }
+    if(f.maxlen&&val.length>f.maxlen){
+      if(!firstError)firstError=f.name;
+      setFieldError(f.name,'Máximo '+f.maxlen+' caracter(es).');
+      continue;
+    }
+    if(f.type==='number'&&val!==''){
+      if(isNaN(Number(val))){
+        if(!firstError)firstError=f.name;
+        setFieldError(f.name,'Debe ser un número.');
+        continue;
+      }
+      val=Number(val);
+    }else if(f.type==='number'&&val===''){val=null;}
+    body[f.name]=val;
+  }
+  if(firstError)return;
+
+  const btn=document.getElementById('btnSave');
+  if(btn){btn.disabled=true;btn.textContent='Guardando...';}
+  setStatus('Guardando...');
+  let url=API_BASE+cfg.endpoint;
+  let method='POST';
+  if(action==='update'){
+    const pkVal=currentRows[selectedRowIndex][cfg.pk];
+    url+='/'+encodeURIComponent(pkVal);
+    method='PUT';
+  }
+  try{
+    const res=await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!res.ok){
+      const err=await res.json().catch(()=>({}));
+      throw new Error(err.error||(res.status+' '+res.statusText));
+    }
+    closeModal();
+    showAlert('Registro '+(action==='create'?'creado':'actualizado')+' correctamente.','info');
+    await loadData();
+  }catch(err){
+    if(btn){btn.disabled=false;btn.textContent=action==='create'?'Crear':'Guardar';}
+    showAlert('Error: '+err.message,'error');
+    setStatus('Error al guardar.');
+  }
+}
+
+async function deleteSelected(){
+  if(!currentTable){showAlert('Seleccione una tabla primero.','error');return;}
+  if(selectedRowIndex<0){showAlert('Seleccione una fila para eliminar.','error');return;}
+  const cfg=tableConfig[currentTable];
+  const row=currentRows[selectedRowIndex];
+  const pkVal=getPkValue(row);
+  if(!confirm('¿Eliminar el registro '+cfg.pkLabel+': '+pkVal+' de '+cfg.name+'?'))return;
+  setStatus('Eliminando...');
+  setLoading(true);
+  try{
+    let url=API_BASE+cfg.endpoint+'/';
+    if(cfg.compoundPk){
+      url+=row.escuela_id_escuela+'/'+row.centro_id_centro;
+    }else{
+      url+=encodeURIComponent(pkVal);
+    }
+    const res=await fetch(url,{method:'DELETE'});
+    if(!res.ok){
+      const err=await res.json().catch(()=>({}));
+      throw new Error(err.error||(res.status+' '+res.statusText));
+    }
+    showAlert('Registro eliminado.','info');
+    selectedRowIndex=-1;
+    await loadData();
+  }catch(err){
+    showAlert('Error: '+err.message,'error');
+    setStatus('Error al eliminar.');
+  }finally{
+    setLoading(false);
+  }
+}
+
+function escapeHtml(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){closeModal();return;}
+  const modalOpen=document.getElementById('modalOverlay').classList.contains('active');
+  if(modalOpen){
+    if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){
+      const btn=document.getElementById('btnSave');if(btn)btn.click();
+    }
+    return;
+  }
+  if(e.key==='F5'||e.key==='r'&&(e.ctrlKey||e.metaKey)){
+    if(currentTable){e.preventDefault();loadData();}
+  }
+  if((e.ctrlKey||e.metaKey)&&e.key==='n'){e.preventDefault();openCreateModal();}
+  if((e.ctrlKey||e.metaKey)&&e.key==='e'){e.preventDefault();openEditModal();}
+  if((e.ctrlKey||e.metaKey)&&e.key==='f'){
+    e.preventDefault();
+    const si=document.getElementById('searchInput');if(!si.disabled)si.focus();
+  }
+  if(e.key==='Delete'&&selectedRowIndex>=0){deleteSelected();}
+  if((e.key==='ArrowDown'||e.key==='ArrowUp')&&currentTable&&filteredRows.length){
+    e.preventDefault();
+    let fi=filteredRows.indexOf(currentRows[selectedRowIndex]);
+    fi=e.key==='ArrowDown'?Math.min(fi+1,filteredRows.length-1):Math.max(fi-1,0);
+    selectRow(fi);
+    const rows=document.querySelectorAll('table.data-table tbody tr');
+    if(rows[fi])rows[fi].scrollIntoView({block:'nearest'});
+  }
+});
+
+init();
+</script>
+</body>
+</html>

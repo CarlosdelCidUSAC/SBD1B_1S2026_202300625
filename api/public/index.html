@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SBD1 — Centros de Evaluación</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+  :root {
+    --bg: #fff;
+    --fg: #000;
+    --border: #000;
+    --stripe-a: #fff;
+    --stripe-b: #000;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #fff;
+    font-family: 'VT323', 'Chicago', 'Charcoal', monospace;
+    font-size: 16px;
+    color: #000;
+    min-height: 100vh;
+    user-select: none;
+  }
+
+  /* ── MENU BAR ── */
+  .menubar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: 22px;
+    background: #fff;
+    border-bottom: 1px solid #000;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    gap: 16px;
+    font-size: 14px;
+  }
+  .menubar .apple { font-weight: bold; font-size: 14px; }
+  .menubar span { cursor: default; }
+
+  /* ── DESKTOP ── */
+  .desktop {
+    padding-top: 30px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  /* ── WINDOW ── */
+  .window {
+    margin-top: 40px;
+    width: 820px;
+    max-width: 95vw;
+    border: 2px solid #000;
+    background: #fff;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.15);
+  }
+
+  /* ── TITLE BAR ── */
+  .titlebar {
+    height: 22px;
+    background: repeating-linear-gradient(
+      0deg,
+      #fff 0px, #fff 1px,
+      #000 1px, #000 2px
+    );
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+    border-bottom: 1px solid #000;
+  }
+  .titlebar .close-box {
+    width: 14px; height: 14px;
+    border: 1px solid #000;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; line-height: 1;
+    cursor: pointer;
+  }
+  .titlebar .title {
+    color: #000;
+    font-size: 14px;
+    text-align: center;
+    flex: 1;
+    background: #fff;
+    margin: 0 8px;
+  }
+  .titlebar .zoom-box {
+    width: 14px; height: 14px;
+    border: 1px solid #000;
+    background: #fff;
+    font-size: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-bottom: 1px solid #000;
+    flex-wrap: wrap;
+  }
+  .toolbar label {
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .toolbar select {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    border: 1px solid #000;
+    background: #fff;
+    color: #000;
+    padding: 2px 4px;
+    cursor: pointer;
+    min-width: 180px;
+  }
+  .toolbar button {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    border: 1px solid #000;
+    background: #fff;
+    color: #000;
+    padding: 3px 12px;
+    cursor: pointer;
+  }
+  .toolbar button:hover { background: #000; color: #fff; }
+  .toolbar button:active { background: #000; color: #fff; }
+  .toolbar .sep { width: 1px; height: 20px; background: #000; margin: 0 4px; }
+
+  /* ── CONTENT ── */
+  .content {
+    padding: 8px;
+    min-height: 280px;
+    max-height: 60vh;
+    overflow: auto;
+  }
+  .content::-webkit-scrollbar { width: 14px; }
+  .content::-webkit-scrollbar-track { background: #fff; border-left: 1px solid #000; }
+  .content::-webkit-scrollbar-thumb { background: #000; border: 2px solid #fff; }
+  .content::-webkit-scrollbar-button { display: block; height: 14px; background: #fff; border: 1px solid #000; }
+
+  /* ── TABLE ── */
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  table.data-table th {
+    text-align: left;
+    padding: 4px 6px;
+    border: 1px solid #000;
+    background: #000;
+    color: #fff;
+    font-weight: normal;
+    position: sticky;
+    top: 0;
+  }
+  table.data-table td {
+    padding: 3px 6px;
+    border: 1px solid #000;
+    white-space: nowrap;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  table.data-table tr:hover td {
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+  }
+  table.data-table tr.selected td {
+    background: #000;
+    color: #fff;
+  }
+
+  /* ── STATUS BAR ── */
+  .statusbar {
+    height: 20px;
+    border-top: 1px solid #000;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    font-size: 12px;
+    gap: 8px;
+  }
+  .statusbar .count { font-weight: bold; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.7);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    width: 480px;
+    max-width: 95vw;
+    border: 2px solid #000;
+    background: #fff;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.15);
+  }
+  .modal .titlebar { cursor: default; }
+  .modal .body {
+    padding: 12px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  .modal .field {
+    margin-bottom: 8px;
+  }
+  .modal .field label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+  .modal .field input, .modal .field select {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    border: 1px solid #000;
+    background: #fff;
+    color: #000;
+    padding: 4px 6px;
+    width: 100%;
+  }
+  .modal .field input:focus { outline: 2px solid #000; outline-offset: -2px; }
+  .modal .field .hint { font-size: 12px; color: #666; }
+  .modal .buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #000;
+  }
+  .modal .buttons button {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    border: 1px solid #000;
+    background: #fff;
+    color: #000;
+    padding: 4px 16px;
+    cursor: pointer;
+    min-width: 70px;
+  }
+  .modal .buttons button:hover { background: #000; color: #fff; }
+  .modal .buttons button.primary { background: #000; color: #fff; }
+  .modal .buttons button.primary:hover { background: #fff; color: #000; }
+
+  /* ── ALERT ── */
+  .alert {
+    padding: 8px 12px;
+    margin: 5px 8px;
+    border: 1px solid #000;
+    font-size: 14px;
+    display: none;
+  }
+  .alert.error { display: block; background: #000; color: #fff; }
+  .alert.info { display: block; }
+
+  /* ── CONSOLE ── */
+  .console-line {
+    font-family: 'VT323', monospace;
+    font-size: 13px;
+    padding: 2px 8px;
+    white-space: pre-wrap;
+  }
+  .console-line.err { color: #000; background: #eee; }
+</style>
+</head>
+<body>
+
+<div class="menubar">
+  <span class="apple">&#x269B;</span>
+  <span>File</span>
+  <span>Edit</span>
+  <span>View</span>
+  <span>Special</span>
+  <span style="margin-left:auto;">SBD1 · Centros de Evaluación</span>
+</div>
+
+<div class="desktop">
+
+  <div class="window" id="mainWindow">
+    <div class="titlebar">
+      <div class="close-box" title="Close">&#x25A0;</div>
+      <div class="title">SBD1 — CRUD Interface v1.0</div>
+      <div class="zoom-box">&#x25A1;</div>
+    </div>
+
+    <div class="toolbar">
+      <label>Table:</label>
+      <select id="tableSelect"></select>
+      <button onclick="loadData()">Open</button>
+      <span class="sep"></span>
+      <button onclick="openCreateModal()">New</button>
+      <button onclick="openEditModal()">Edit</button>
+      <button onclick="deleteSelected()">Delete</button>
+      <span class="sep"></span>
+      <button onclick="loadData()">Refresh</button>
+    </div>
+
+    <div id="alertBox"></div>
+
+    <div class="content" id="tableContent">
+      <div class="console-line">Select a table and click <b>Open</b> to load records.</div>
+      <div class="console-line" style="margin-top:8px;">&#x25B6; API running on <b>http://localhost:3000</b></div>
+    </div>
+
+    <div class="statusbar">
+      <span class="count" id="rowCount">0 records</span>
+      <span style="margin-left:auto;" id="statusMsg">Ready.</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── MODAL ── -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="titlebar">
+      <div class="close-box" onclick="closeModal()">&#x25A0;</div>
+      <div class="title" id="modalTitle">Record</div>
+      <div class="zoom-box">&#x25A1;</div>
+    </div>
+    <div class="body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ── TABLE DEFINITIONS ──
+const tableConfig = {
+  centros: {
+    name: 'CENTRO_EVAL',
+    label: 'Centros de Evaluación',
+    endpoint: '/api/centros',
+    pk: 'no_centro',
+    pkLabel: 'id',
+    fields: [
+      { name: 'no_centro', label: 'No. Centro', type: 'number', pk: true },
+      { name: 'nombre', label: 'Nombre', type: 'text', required: true }
+    ]
+  },
+  escuelas: {
+    name: 'ESCUELA_AUTOMOV',
+    label: 'Escuelas de Manejo',
+    endpoint: '/api/escuelas',
+    pk: 'no_aut',
+    pkLabel: 'id',
+    fields: [
+      { name: 'no_aut', label: 'No. Autoescuela', type: 'number', pk: true },
+      { name: 'nombre', label: 'Nombre', type: 'text', required: true },
+      { name: 'direccion', label: 'Dirección', type: 'text', required: true },
+      { name: 'acuerdo', label: 'Acuerdo', type: 'text', required: true }
+    ]
+  },
+  licencias: {
+    name: 'LICENCIA',
+    label: 'Licencias',
+    endpoint: '/api/licencias',
+    pk: 'codigo',
+    pkLabel: 'id',
+    fields: [
+      { name: 'codigo', label: 'Código', type: 'text', pk: true, maxlen: 1 },
+      { name: 'descripcion', label: 'Descripción', type: 'text', required: true }
+    ]
+  },
+  departamentos: {
+    name: 'DEPARTAMENTO',
+    label: 'Departamentos',
+    endpoint: '/api/departamentos',
+    pk: 'id_departamento',
+    pkLabel: 'id',
+    fields: [
+      { name: 'id_departamento', label: 'ID', type: 'number', pk: true },
+      { name: 'nombre', label: 'Nombre', type: 'text', required: true },
+      { name: 'codigo', label: 'Código Depto.', type: 'text', required: true }
+    ]
+  },
+  municipios: {
+    name: 'MUNICIPIO',
+    label: 'Municipios',
+    endpoint: '/api/municipios',
+    pk: 'id_municipio',
+    pkLabel: 'id',
+    fields: [
+      { name: 'id_municipio', label: 'ID Municipio', type: 'number', pk: true },
+      { name: 'departamento_id_departamento', label: 'Departamento ID', type: 'number', required: true },
+      { name: 'nombre', label: 'Nombre', type: 'text', required: true },
+      { name: 'codigo', label: 'Código', type: 'text', required: true }
+    ]
+  },
+  ubicaciones: {
+    name: 'UBICACION',
+    label: 'Ubicaciones',
+    endpoint: '/api/ubicaciones',
+    pk: null,
+    pkLabel: null,
+    compoundPk: true,
+    fields: [
+      { name: 'escuela_id_escuela', label: 'Escuela ID', type: 'number', required: true },
+      { name: 'centro_id_centro', label: 'Centro ID', type: 'number', required: true }
+    ]
+  },
+  registros: {
+    name: 'REGISTRO',
+    label: 'Registros',
+    endpoint: '/api/registros',
+    pk: 'id_registro',
+    pkLabel: 'id',
+    fields: [
+      { name: 'id_registro', label: 'ID', type: 'number', pk: true },
+      { name: 'ubicacion_escuela_id_escuela', label: 'Escuela ID', type: 'number', required: true },
+      { name: 'ubicacion_centro_id_centro', label: 'Centro ID', type: 'number', required: true },
+      { name: 'municipio_id_municipio', label: 'Municipio ID', type: 'number', required: true },
+      { name: 'municipio_departamento_id_departamento', label: 'Mun. Depto. ID', type: 'number', required: true },
+      { name: 'fecha', label: 'Fecha', type: 'text', required: true, hint: 'YYYY-MM-DD' },
+      { name: 'tipo_tramite', label: 'Tipo Trámite', type: 'text', required: true },
+      { name: 'tipo_licencia', label: 'Tipo Licencia', type: 'text', required: true },
+      { name: 'nombre_completo', label: 'Nombre Completo', type: 'text', required: true },
+      { name: 'genero', label: 'Género', type: 'text', required: true, maxlen: 1 }
+    ]
+  },
+  correlativos: {
+    name: 'CORRELATIVO',
+    label: 'Correlativos',
+    endpoint: '/api/correlativos',
+    pk: 'id_correlativo',
+    pkLabel: 'id',
+    fields: [
+      { name: 'id_correlativo', label: 'ID', type: 'number', pk: true },
+      { name: 'fecha', label: 'Fecha', type: 'text', required: true, hint: 'YYYY-MM-DD' },
+      { name: 'no_examen', label: 'No. Examen', type: 'number', required: true }
+    ]
+  },
+  examenes: {
+    name: 'EXAMEN',
+    label: 'Exámenes',
+    endpoint: '/api/examenes',
+    pk: 'id_examen',
+    pkLabel: 'id',
+    fields: [
+      { name: 'id_examen', label: 'ID', type: 'number', pk: true },
+      { name: 'registro_id_registro', label: 'Registro ID', type: 'number', required: true },
+      { name: 'correlativo_id_correlativo', label: 'Correlativo ID', type: 'number', required: true },
+      { name: 'registro_id_escuela', label: 'Escuela ID', type: 'number', required: true },
+      { name: 'registro_id_centro', label: 'Centro ID', type: 'number', required: true },
+      { name: 'registro_municipio_id_municipio', label: 'Municipio ID', type: 'number', required: true },
+      { name: 'registro_municipio_departamento_id_departamento', label: 'Mun. Depto. ID', type: 'number', required: true }
+    ]
+  },
+  preguntas: {
+    name: 'PREGUNTA',
+    label: 'Preguntas Teóricas',
+    endpoint: '/api/preguntas',
+    pk: 'id_pregunta',
+    pkLabel: 'id',
+    fields: [
+      { name: 'id_pregunta', label: 'ID', type: 'number', pk: true },
+      { name: 'pregunta_texto', label: 'Pregunta', type: 'text', required: true },
+      { name: 'respuesta_a', label: 'Respuesta A', type: 'text', required: true },
+      { name: 'respuesta_b', label: 'Respuesta B', type: 'text', required: true },
+      { name: 'respuesta_c', label: 'Respuesta C', type: 'text', required: true },
+      { name: 'respuesta_d', label: 'Respuesta D', type: 'text', required: false },
+      { name: 'respuesta_correcta', label: 'Correcta', type: 'text', required: true, maxlen: 1 }
+    ]
+  },
+  'preguntas-practico': {
+    name: 'PREGUNTA_PRACTICO',
+    label: 'Preguntas Prácticas',
+    endpoint: '/api/preguntas-practico',
+    pk: 'id_pregunta_practico',
+    pkLabel: 'id',
+    fields: [
+      { name: 'id_pregunta_practico', label: 'ID', type: 'number', pk: true },
+      { name: 'pregunta_texto', label: 'Pregunta', type: 'text', required: true },
+      { name: 'punteo', label: 'Punteo', type: 'number', required: true }
+    ]
+  },
+  'respuestas-usuario': {
+    name: 'RESPUESTA_USUARIO',
+    label: 'Respuestas Teóricas',
+    endpoint: '/api/respuestas-usuario',
+    pk: 'id_respuesta_usuario',
+    pkLabel: 'id',
+    fields: [
+      { name: 'id_respuesta_usuario', label: 'ID', type: 'number', pk: true },
+      { name: 'pregunta_id_pregunta', label: 'Pregunta ID', type: 'number', required: true },
+      { name: 'examen_id_examen', label: 'Examen ID', type: 'number', required: true },
+      { name: 'respuesta', label: 'Respuesta', type: 'text', required: true, maxlen: 1 }
+    ]
+  },
+  'respuestas-practico': {
+    name: 'RESPUESTA_PRACTICO_USUARIO',
+    label: 'Respuestas Prácticas',
+    endpoint: '/api/respuestas-practico',
+    pk: 'id_respuesta_practico',
+    pkLabel: 'id',
+    fields: [
+      { name: 'id_respuesta_practico', label: 'ID', type: 'number', pk: true },
+      { name: 'pregunta_practico_id_pregunta_practico', label: 'Preg. Práctica ID', type: 'number', required: true },
+      { name: 'examen_id_examen', label: 'Examen ID', type: 'number', required: true },
+      { name: 'nota', label: 'Nota', type: 'number', required: true }
+    ]
+  }
+};
+
+const API_BASE = 'http://localhost:3000';
+
+let currentTable = null;
+let currentRows = [];
+let selectedRowIndex = -1;
+
+// ── INIT ──
+function init() {
+  const sel = document.getElementById('tableSelect');
+  for (const [key, cfg] of Object.entries(tableConfig)) {
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = cfg.label + ' (' + cfg.name + ')';
+    sel.appendChild(opt);
+  }
+}
+
+// ── ALERT ──
+function showAlert(msg, type) {
+  const box = document.getElementById('alertBox');
+  box.innerHTML = '<div class="alert ' + (type || 'info') + '">' + msg + '</div>';
+  setTimeout(() => { box.innerHTML = ''; }, 5000);
+}
+
+// ── STATUS ──
+function setStatus(msg) {
+  document.getElementById('statusMsg').textContent = msg;
+}
+
+// ── LOAD DATA ──
+async function loadData() {
+  const key = document.getElementById('tableSelect').value;
+  if (!key) return;
+  currentTable = key;
+  selectedRowIndex = -1;
+  setStatus('Loading ' + tableConfig[key].label + '...');
+  try {
+    const res = await fetch(API_BASE + tableConfig[key].endpoint);
+    if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
+    currentRows = await res.json();
+    renderTable();
+    document.getElementById('rowCount').textContent = currentRows.length + ' record' + (currentRows.length !== 1 ? 's' : '');
+    setStatus('Ready.');
+  } catch (err) {
+    showAlert('Error: ' + err.message, 'error');
+    setStatus('Error loading data.');
+    currentRows = [];
+    renderTable();
+    document.getElementById('rowCount').textContent = '0 records';
+  }
+}
+
+// ── RENDER TABLE ──
+function renderTable() {
+  const cfg = tableConfig[currentTable];
+  const container = document.getElementById('tableContent');
+  if (!currentRows.length) {
+    container.innerHTML = '<div class="console-line">No records found in <b>' + cfg.name + '</b>.</div>';
+    return;
+  }
+  let html = '<table class="data-table"><thead><tr>';
+  const visibleFields = cfg.fields;
+  for (const f of visibleFields) {
+    html += '<th>' + f.label + '</th>';
+  }
+  html += '</tr></thead><tbody>';
+  for (let i = 0; i < currentRows.length; i++) {
+    const row = currentRows[i];
+    const sel = (i === selectedRowIndex) ? ' selected' : '';
+    html += '<tr class="' + sel + '" onclick="selectRow(' + i + ', event)">';
+    for (const f of visibleFields) {
+      let val = row[f.name];
+      if (val === null || val === undefined) val = '';
+      html += '<td>' + escapeHtml(String(val)) + '</td>';
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+function selectRow(idx, event) {
+  selectedRowIndex = idx;
+  renderTable();
+  const cfg = tableConfig[currentTable];
+  const row = currentRows[idx];
+  let pkVal = '';
+  if (!cfg.compoundPk) {
+    pkVal = row[cfg.pk];
+  } else {
+    pkVal = row.escuela_id_escuela + '/' + row.centro_id_centro;
+  }
+  setStatus('Selected ' + cfg.pkLabel + ': ' + pkVal);
+}
+
+// ── OPEN MODALS ──
+function openCreateModal() {
+  if (!currentTable) { showAlert('Select a table first.', 'error'); return; }
+  renderModal('New Record — ' + tableConfig[currentTable].name, null);
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function openEditModal() {
+  if (!currentTable) { showAlert('Select a table first.', 'error'); return; }
+  if (selectedRowIndex < 0) { showAlert('Select a row to edit.', 'error'); return; }
+  renderModal(
+    'Edit Record — ' + tableConfig[currentTable].name,
+    currentRows[selectedRowIndex]
+  );
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+// ── MODAL FORM ──
+function renderModal(title, data) {
+  document.getElementById('modalTitle').textContent = title;
+  const cfg = tableConfig[currentTable];
+  let html = '';
+  for (const f of cfg.fields) {
+    if (f.pk && data) {
+      html += '<div class="field"><label>' + f.label + '</label>';
+      html += '<input type="text" value="' + (data[f.name] || '') + '" disabled>';
+      html += '<div class="hint">(primary key — read only)</div></div>';
+    } else {
+      html += '<div class="field"><label>' + f.label + (f.required ? ' *' : '') + '</label>';
+      let val = data ? (data[f.name] || '') : '';
+      html += '<input type="' + f.type + '" id="f_' + f.name + '" value="' + escapeHtml(String(val)) + '"';
+      if (f.maxlen) html += ' maxlength="' + f.maxlen + '"';
+      html += '>';
+      if (f.hint) html += '<div class="hint">' + f.hint + '</div>';
+      html += '</div>';
+    }
+  }
+  html += '<div class="buttons">';
+  html += '<button onclick="closeModal()">Cancel</button>';
+  if (data) {
+    html += '<button class="primary" onclick="submitForm(\'update\')">Save</button>';
+  } else {
+    html += '<button class="primary" onclick="submitForm(\'create\')">Create</button>';
+  }
+  html += '</div>';
+  document.getElementById('modalBody').innerHTML = html;
+}
+
+// ── SUBMIT FORM ──
+async function submitForm(action) {
+  const cfg = tableConfig[currentTable];
+  const body = {};
+  for (const f of cfg.fields) {
+    if (f.pk && action === 'update') continue;
+    const el = document.getElementById('f_' + f.name);
+    if (!el) continue;
+    let val = el.value.trim();
+    if (f.required && !val) {
+      showAlert('Field "' + f.label + '" is required.', 'error');
+      return;
+    }
+    if (f.type === 'number') {
+      val = val === '' ? null : Number(val);
+    }
+    body[f.name] = val;
+  }
+  setStatus('Saving...');
+  let url = API_BASE + cfg.endpoint;
+  let method = 'POST';
+  if (action === 'update') {
+    let pkVal;
+    if (!cfg.compoundPk) {
+      pkVal = currentRows[selectedRowIndex][cfg.pk];
+      url += '/' + encodeURIComponent(pkVal);
+    } else {
+      pkVal = currentRows[selectedRowIndex].escuela_id_escuela + '/' + currentRows[selectedRowIndex].centro_id_centro;
+      url += '/' + pkVal;
+    }
+    method = 'PUT';
+  }
+  try {
+    const res = await fetch(url, {
+      method: method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || (res.status + ' ' + res.statusText));
+    }
+    closeModal();
+    showAlert('Record ' + (action === 'create' ? 'created' : 'updated') + ' successfully.');
+    await loadData();
+  } catch (err) {
+    showAlert('Error: ' + err.message, 'error');
+    setStatus('Error saving.');
+  }
+}
+
+// ── DELETE ──
+async function deleteSelected() {
+  if (!currentTable) { showAlert('Select a table first.', 'error'); return; }
+  if (selectedRowIndex < 0) { showAlert('Select a row to delete.', 'error'); return; }
+  const cfg = tableConfig[currentTable];
+  let pkVal;
+  if (!cfg.compoundPk) {
+    pkVal = currentRows[selectedRowIndex][cfg.pk];
+  } else {
+    pkVal = currentRows[selectedRowIndex].escuela_id_escuela + '/' + currentRows[selectedRowIndex].centro_id_centro;
+  }
+  if (!confirm('Delete record ' + cfg.pkLabel + ': ' + pkVal + ' from ' + cfg.name + '?')) return;
+  setStatus('Deleting...');
+  try {
+    const url = API_BASE + cfg.endpoint + '/' + encodeURIComponent(pkVal);
+    const res = await fetch(url, { method: 'DELETE' });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || (res.status + ' ' + res.statusText));
+    }
+    showAlert('Record deleted.');
+    selectedRowIndex = -1;
+    await loadData();
+  } catch (err) {
+    showAlert('Error: ' + err.message, 'error');
+    setStatus('Error deleting.');
+  }
+}
+
+// ── HELPERS ──
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ── CLOSE MODAL ON OVERLAY CLICK ──
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ── KEYBOARD ──
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+init();
+</script>
+
+</body>
+</html>
