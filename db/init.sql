@@ -1,9 +1,4 @@
--- ============================================================
--- SBD1 Proyecto 2 - DDL + Seed Data
--- Compatible con Oracle XE 21c & Docker gvenzl/oracle-xe
--- ============================================================
-
--- 1. LIMPIEZA (Orden inverso a dependencias)
+-- 1. LIMPIEZA
 DROP TABLE RESPUESTA_PRACTICO_USUARIO CASCADE CONSTRAINTS;
 DROP TABLE RESPUESTA_USUARIO CASCADE CONSTRAINTS;
 DROP TABLE PREGUNTA_PRACTICO CASCADE CONSTRAINTS;
@@ -18,7 +13,7 @@ DROP TABLE MUNICIPIO CASCADE CONSTRAINTS;
 DROP TABLE DEPARTAMENTO CASCADE CONSTRAINTS;
 DROP TABLE LICENCIA CASCADE CONSTRAINTS;
 
--- 2. CREACIÓN DE TABLAS (PKs Autoincrementales + Tipos Corregidos)
+-- 2. CREACIÓN DE TABLAS
 CREATE TABLE LICENCIA (
     codigo      CHAR(1) PRIMARY KEY,
     descripcion VARCHAR2(100) NOT NULL
@@ -127,8 +122,8 @@ CREATE TABLE RESPUESTA_PRACTICO_USUARIO (
     CONSTRAINT RESP_PRAC_EXAMEN_FK FOREIGN KEY (examen_id_examen) REFERENCES EXAMEN(id_examen)
 );
 
--- 3. CARGA DE DATOS (Seed desde JSON, orden estricto por FKs)
--- LICENCIA (Faltaba en el JSON, requerida por REGISTRO)
+-- 3. CARGA DE DATOS 
+-- LICENCIA
 INSERT INTO LICENCIA (codigo, descripcion) VALUES ('A', 'Motocicleta');
 INSERT INTO LICENCIA (codigo, descripcion) VALUES ('B', 'Automóvil particular');
 INSERT INTO LICENCIA (codigo, descripcion) VALUES ('C', 'Camión/Vehículo pesado');

@@ -469,9 +469,27 @@ docker-compose down -v
 
 ## Capturas de Pantalla
 
-<!-- TODO: Agregar capturas de pantalla del funcionamiento -->
-<!-- - docker-compose up corriendo sin errores -->
-<!-- - DBeaver mostrando las tablas -->
+### Conexión a Oracle XE desde DBeaver
+
+![Conexión Oracle XE DBeaver](img/conexi%C3%B3n_oracle-xe_dbeaver.png)
+
+### Datos de las Tablas
+
+| Tabla | Captura |
+|---|---|
+| CENTRO_EVAL | ![Centros de Evaluación](img/centro_eval_datos.png) |
+| ESCUELA_AUTOMOV | ![Escuelas de Automovilismo](img/escuela_atomov_datos.png) |
+| LICENCIA | ![Licencias](img/licencia_datos.png) |
+| DEPARTAMENTO | ![Departamentos](img/departamento_datos.png) |
+| MUNICIPIO | ![Municipios](img/municipio.png) |
+| UBICACION | ![Ubicaciones](img/ubicacion_datos.png) |
+| REGISTRO | ![Registros](img/registro_datos.png) |
+| CORRELATIVO | ![Correlativos](img/correlativo_datos.png) |
+| EXAMEN | ![Exámenes](img/examen_datos.png) |
+| PREGUNTA | ![Preguntas Teóricas](img/pregunta_datos.png) |
+| PREGUNTA_PRACTICO | ![Preguntas Prácticas](img/pregunta_practico_datos.png) |
+| RESPUESTA_USUARIO | ![Respuestas de Usuario](img/respuesta_usuario_datos.png) |
+| RESPUESTA_PRACTICO_USUARIO | ![Respuestas Prácticas](img/respuesta_usuario_practico_datos.png) |
 
 ---
 

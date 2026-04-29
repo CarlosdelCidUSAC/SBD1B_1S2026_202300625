@@ -5,11 +5,6 @@
 # Curso: Sistemas de Bases de Datos 1
 # Universidad San Carlos de Guatemala
 # Carnet: 202300625
-# =============================================================================
-# Uso: Asegúrate de que la API esté corriendo en http://localhost:3000
-#   chmod +x curl_documentation.sh
-#   ./curl_documentation.sh
-# =============================================================================
 
 BASE_URL="http://localhost:3000"
 echo "=========================================="

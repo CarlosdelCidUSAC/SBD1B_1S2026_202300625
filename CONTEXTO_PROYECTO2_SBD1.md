@@ -25,7 +25,7 @@ El proyecto consiste en construir un **backend completo con exposición de servi
 | Pruebas de endpoints | Postman |
 | Versionamiento | Git + GitHub (repositorio privado) |
 
-> ⚠️ Usar una base de datos distinta a Oracle penaliza **-50%**.
+>  Usar una base de datos distinta a Oracle penaliza **-50%**.
 
 ---
 

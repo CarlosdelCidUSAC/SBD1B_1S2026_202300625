@@ -5,7 +5,7 @@ API REST — Centros de Evaluación de Manejo (SBD1)
 
 ---
 
-## 📖 Sintaxis básica
+## Sintaxis básica
 
 ```bash
 # GET  - Obtener/listar datos
@@ -25,12 +25,12 @@ curl -X PUT http://localhost:3000/api/centros/1 \
 curl -X DELETE http://localhost:3000/api/centros/99
 ```
 
-> 💡 **Tips:** Agrega `| python3 -m json.tool` al final para ver el JSON formateado.
+>  **Tips:** Agrega `| python3 -m json.tool` al final para ver el JSON formateado.
 > Usa `-s` (silent) para ocultar barras de progreso: `curl -s http://...`
 
 ---
 
-## 📋 Tablas y sus endpoints
+## Tablas y sus endpoints
 
 | # | Tabla | Ruta | ID |
 |---|-------|------|----|
@@ -50,7 +50,7 @@ curl -X DELETE http://localhost:3000/api/centros/99
 
 ---
 
-## 🔍 Consultas rápidas (copia y pega)
+## Consultas rápidas (copia y pega)
 
 ### Listar todo
 ```bash
@@ -99,7 +99,7 @@ curl -s -X DELETE http://localhost:3000/api/centros/99 | python3 -m json.tool
 
 ---
 
-## 📊 Consultas estadísticas
+## Consultas estadísticas
 
 ```bash
 # Consulta 1: Estadísticas por centro y escuela
@@ -114,7 +114,7 @@ curl -s http://localhost:3000/api/estadisticas/consulta3 | python3 -m json.tool
 
 ---
 
-## ✅ Health check
+## Health check
 
 ```bash
 curl -s http://localhost:3000/health | python3 -m json.tool
@@ -131,7 +131,7 @@ Respuesta esperada:
 
 ---
 
-## ⚠️ Pruebas de error
+## Pruebas de error
 
 ```bash
 # 404 - Recurso no encontrado
@@ -145,7 +145,7 @@ curl -s -X POST http://localhost:3000/api/centros \
 
 ---
 
-## 🚀 Script automatizado
+## Script automatizado
 
 Para probar **todos los endpoints** de una sola vez:
 
