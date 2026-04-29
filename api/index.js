@@ -19,10 +19,10 @@ const dbConfig = {
 async function testConnection() {
   try {
     const conn = await oracledb.getConnection(dbConfig);
-    console.log('✅ Conexión exitosa a Oracle XE');
+    console.log(' Conexión exitosa a Oracle XE');
     await conn.close();
   } catch (err) {
-    console.error('❌ Error al conectar a Oracle:', err.message);
+    console.error(' Error al conectar a Oracle:', err.message);
   }
 }
 
@@ -55,6 +55,6 @@ app.use('/api/estadisticas', require('./routes/estadisticasRoute'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 API corriendo en http://localhost:${PORT}`);
+  console.log(` API corriendo en http://localhost:${PORT}`);
   testConnection();
 });
