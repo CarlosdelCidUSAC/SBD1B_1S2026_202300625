@@ -454,6 +454,33 @@ El repositorio también incluye la colección de Postman original en `postman/co
 3. Configurar la variable `base_url` a `http://localhost:3000`
 4. Ejecutar las peticiones
 
+### Capturas de Postman
+
+#### Colección en Postman
+
+| Vista | Captura |
+|---|---|
+| Colección general | ![Colección 1](postman/img/coleccion_1.png) |
+| Estructura de carpetas | ![Colección 2](postman/img/coleccion_2.png) |
+| Variables de entorno | ![Colección 3](postman/img/Coleccion_3.png) |
+| Configuración de colección | ![Colección 4](postman/img/coleccion_4.png) |
+
+#### Health Check
+
+![Health Check](postman/img/health.png)
+
+#### Peticiones CRUD
+
+| Petición | Captura |
+|---|---|
+| Listar centros | ![Listar centros](postman/img/listar_centros.png) |
+| Listar escuelas | ![Listar escuelas](postman/img/listar_escuelas.png) |
+| Listar licencias | ![Listar licencias](postman/img/listar_licencias.png) |
+| Listar departamentos | ![Listar departamentos](postman/img/listar_departamentos.png) |
+| Crear municipio | ![Crear municipio](postman/img/crear_municipio.png) |
+| Crear ubicación | ![Crear ubicación](postman/img/crear_ubicacion.png) |
+| Crear registro | ![Crear registro](postman/img/crear_registros.png) |
+
 ## Detener los servicios
 
 

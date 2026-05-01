@@ -34,8 +34,8 @@ exports.estadisticasPorCentroYEscuela = async (req, res) => {
         e.nombre AS nombre_escuela,
         COUNT(es.id_examen) AS total_examenes,
         ROUND(AVG(es.teorico_pct), 2) AS promedio_teorico,
-        ROUND(AVG(es.practico_prom), 2) AS promedio_practico,
-        COUNT(CASE WHEN es.teorico_pct >= 70 THEN 1 ELSE NULL END) AS aprobados
+        COALESCE(ROUND(AVG(es.practico_prom), 2), 0) AS promedio_practico,
+        COUNT(CASE WHEN es.teorico_pct >= 70 AND es.practico_prom IS NOT NULL THEN 1 ELSE NULL END) AS aprobados
       FROM CENTRO_EVAL c
       JOIN UBICACION u ON c.no_centro = u.centro_id_centro
       JOIN ESCUELA_AUTOMOV e ON u.escuela_id_escuela = e.no_aut
@@ -89,7 +89,7 @@ exports.rankingEvaluados = async (req, res) => {
       LEFT JOIN RESPUESTA_USUARIO ru ON ru.examen_id_examen = ex.id_examen
       LEFT JOIN PREGUNTA p ON ru.pregunta_id_pregunta = p.id_pregunta
       LEFT JOIN RESPUESTA_PRACTICO_USUARIO rp ON rp.examen_id_examen = ex.id_examen
-      GROUP BY reg.nombre_completo
+      GROUP BY reg.id_registro, reg.nombre_completo
       ORDER BY ranking
     `);
     res.json(result.rows.map(row => ({
